@@ -1,7 +1,10 @@
-'use client'
+'use client';
 
-import { r3f } from '@/helpers/global'
+import { r3f } from '@/helpers/global';
 
-export const Three = ({ children }) => {
-  return <r3f.In>{children}</r3f.In>
-}
+type ThreeProps = {
+  children: React.ReactNode;
+};
+export const Three = ({ children }: ThreeProps) => {
+  return <r3f.In>{children}</r3f.In>;
+};

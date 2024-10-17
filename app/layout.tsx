@@ -6,7 +6,11 @@ export const metadata = {
   description: 'A minimal starter for Nextjs + React-three-fiber and Threejs.',
 }
 
-export default function RootLayout({ children }) {
+type LayoutProps = {
+  children: React.ReactNode;
+};
+
+export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang='en' className='antialiased'>
       {/*
