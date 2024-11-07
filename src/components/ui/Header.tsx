@@ -10,6 +10,13 @@ import { useEffect, useState } from "react"
 import { StarknetProvider } from "@/controller/StarknetProvider"
 import { useAccount, useConnect, useDisconnect } from "@starknet-react/core"
 import CartridgeConnector from "@cartridge/connector"
+import { Plus_Jakarta_Sans } from 'next/font/google'
+
+// fonts
+const plusJakarta = Plus_Jakarta_Sans({
+    subsets: ['latin'],
+    weight: ['500'],
+  })
 
 // controller integration
 export function ConnectWallet() {
@@ -35,7 +42,7 @@ export function ConnectWallet() {
 			)}
 
 			<Link
-				className="btn text-black hover:bg-black-600 w-full shadow-sm text-2xl"
+				className={`btn text-black hover:bg-black-600 w-full text-2xl ${plusJakarta.className}`}
 				onClick={() => {
 					address ? disconnect() : connect({ connector });
 				}}
