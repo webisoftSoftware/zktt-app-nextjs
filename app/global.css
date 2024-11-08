@@ -3,9 +3,10 @@
 @tailwind utilities;
 
 @layer base {
-  * {
+  /* * {
     box-sizing: border-box;
-  }
+    outline: 1px dotted blue;
+  } */
 
   html,
   body,
@@ -55,3 +56,4 @@
   font-style: italic;
   font-display: swap;
 }
+

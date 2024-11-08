@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import dynamic from 'next/dynamic';
+import { Center } from '@react-three/drei';
 
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: false });
 
@@ -17,9 +18,10 @@ const Layout = ({ children }: LayoutProps) => {
       ref={ref}
       style={{
         position: 'relative',
-        width: ' 100%',
-        height: '100%',
-        overflow: 'auto',
+        width: '1280px',
+        height: '720px',
+        margin: '0 auto',
+        // overflow: 'auto', DO NOT EVER SET THIS
         touchAction: 'auto',
       }}
     >

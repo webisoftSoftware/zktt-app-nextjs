@@ -65,12 +65,18 @@ export function Dashboard() {
             pointerEvents: 'none',
             position: 'absolute',
             bottom: '105px',
-            transform: 'none'
+            transform: 'none',
+            zIndex: 1
           }}
+          zIndexRange={[0, 10]}
         >
           <div 
             className="flex justify-center gap-7"
-            style={{ pointerEvents: 'auto' }}
+            style={{ 
+              pointerEvents: 'auto',
+              position: 'relative',
+              zIndex: 1
+            }}
           >
             <Button 
               className="px-14 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"

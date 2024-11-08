@@ -13,7 +13,7 @@ export default function GameCanvas() {
   const [isDashboardView, setIsDashboardView] = useState(true)
 
   return (
-    <div className="flex min-h-screen justify-center items-center p-4 sm:p-8">
+    <div className="flex min-h-screen justify-center items-center">
       <div 
         ref={containerRef}
         className="relative rounded-2xl overflow-hidden"

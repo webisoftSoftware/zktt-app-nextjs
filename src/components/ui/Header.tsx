@@ -27,7 +27,7 @@ export function ConnectWallet() {
 
 		<div>
 			<button
-				className="btn text-black transition-colors w-full text-lg px-4 py-2 rounded-lg border-black font-normal lowercase"
+				className="text-black transition-colors w-full text-lg px-4 py-2 rounded-lg border-black font-normal lowercase"
 				onClick={(e) => {
 					e.preventDefault();
 					console.log("Button clicked!"); // Debug log
@@ -50,7 +50,7 @@ export function ConnectWallet() {
 
 export default function Header({ nav = true }: { nav?: boolean }) {
 	return (
-		<div className="absolute top-4 w-full px-8 flex justify-between items-center z-50">
+		<div className="absolute top-4 w-full px-8 flex justify-between items-center z-6">
 			<div className="flex items-center gap-4">
 				<Link href="/">
 					<Image 
