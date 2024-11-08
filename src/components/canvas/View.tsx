@@ -1,39 +1,31 @@
-'use client';
+// 'use client';
 
-import { forwardRef, HTMLAttributes, MutableRefObject, Suspense, useImperativeHandle, useRef } from 'react';
-import { OrbitControls, PerspectiveCamera, View as ViewImpl, ViewProps } from '@react-three/drei';
-import { Three } from '@/helpers/components/Three';
-import { ColorRepresentation } from 'three';
+// import { forwardRef, useRef } from 'react';
+// import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+// import { Canvas } from '@react-three/fiber';
+// import * as THREE from 'three';
 
-type CommonProps = {
-  color?: ColorRepresentation;
-};
-export const Common = ({ color }: CommonProps) => (
-  <Suspense fallback={null}>
-    {color && <color attach='background' args={[color]} />}
-    <ambientLight />
-    <pointLight position={[20, 30, 10]} intensity={3} decay={0.2} />
-    <pointLight position={[-10, -10, -10]} color='blue' decay={0.2} />
-    <PerspectiveCamera makeDefault fov={40} position={[0, 0, 6]} />
-  </Suspense>
-);
+// const View = forwardRef(({ children, orbit = false, ...props }, ref) => {
+// const localRef = useRef<HTMLDivElement>(null);
 
-const View = forwardRef(({ children, orbit, ...props }: ViewProps & { orbit?: boolean }, ref) => {
-  const localRef = useRef<HTMLDivElement>(null);
-  useImperativeHandle(ref, () => localRef.current);
+//   return (
+//     <>
+//       <div ref={localRef} {...props}>
+//         <Canvas
+//           className="w-[1280px] h-[m720px] "
+//           gl={{ toneMapping: THREE.AgXToneMapping }}
+//           camera={{ position: [0, 0, 6], fov: 40 }}
+//         >
+//           <ambientLight />
+//           <pointLight position={[20, 30, 10]} intensity={3} decay={0.2} />
+//           <pointLight position={[-10, -10, -10]} color="blue" decay={0.2} />
+//           {children}
+//           {orbit && <OrbitControls />}
+//         </Canvas>
+//       </div>
+//     </>
+//   );
+// });
+// View.displayName = 'View';
 
-  return (
-    <>
-      <div ref={localRef} {...props} />
-      <Three>
-        <ViewImpl track={localRef.current ? (localRef as MutableRefObject<HTMLDivElement>) : undefined}>
-          {children}
-          {orbit && <OrbitControls />}
-        </ViewImpl>
-      </Three>
-    </>
-  );
-});
-View.displayName = 'View';
-
-export { View };
+// export { View };

@@ -38,7 +38,7 @@ export function Dashboard() {
   const LAYER_SPACING = 0.007
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]}>
+    <group ref={groupRef} position={[0, 0.35, 1]}>
       {/* Generate multiple layers */}
       {Array.from({ length: LAYERS }).map((_, index) => (
         <mesh 
@@ -57,6 +57,7 @@ export function Dashboard() {
             // opacity={1 - (index * 0.1)} 
           />
         </mesh>
+        
       ))}
 
       <Html
@@ -68,18 +69,18 @@ export function Dashboard() {
         }}
       >
         <div 
-          className="w-full h-full flex justify-between items-end p-8"
+          className="absolute bottom-0 flex justify-evenly w-full px-64 pb-16"
           style={{ pointerEvents: 'auto' }}
         >
           <Button 
-            className="bottom-7 px-12 py-4 text-xl bg-white hover:bg-white/90 text-black border-2 border-black rounded-xl transition-all"
+            className="left-0 px-12 py-4 text-xl bg-white hover:bg-black/5 text-black border-2 border-black rounded-xl transition-all"
             onClick={() => console.log('Enter clicked')}
           >
             ENTER
           </Button>
-          
+  
           <Button 
-            className="bottom-7 px-7 py-4 text-xl bg-white hover:bg-white/90 text-black border-2 border-black rounded-xl transition-all"
+            className="right-0 bottom-0 px-7 py-4 text-xl bg-white hover:bg-black/5 text-black border-2 border-black rounded-xl transition-all"
             onClick={() => console.log('Settings clicked')}
           >
             SETTINGS

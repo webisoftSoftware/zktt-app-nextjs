@@ -1,50 +1,42 @@
-import { useState, useEffect } from 'react'
-import { View } from '@/components/canvas/View'
-import { Common } from '@/components/canvas/View'
+'use client'
+
+import { useRef } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
+import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
 
-/**
- * GameCanvas Component
- * Main container for the game interface
- * 
- * Key features:
- * - Manages loading state transition
- * - Contains both 3D and UI elements
- * - Maintains persistent rounded styling
- * 
- * Implementation details:
- * - useState: Tracks loading state
- * - useEffect: Handles loading timeout (3 seconds)
- * - Cleanup: Clears timeout on unmount
- * - Responsive container: Uses aspect ratio
- * - Persistent styling: Uses fixed rounded corners
- * - Border radius: Maintained with overflow hidden
- * - Background: Consistent white with proper opacity
- * 
- * Layout structure:
- * - Outer container: Handles centering and padding
- * - Inner container: Fixed dimensions with rounded corners
- * - View component: 3D rendering with preserved styling
- */
 export default function GameCanvas() {
-  // const [isLoading, setIsLoading] = useState(true)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   return (
     <div className="flex min-h-screen justify-center items-center p-8">
       <div 
+        ref={containerRef}
         className="relative w-[1280px] h-[720px] rounded-2xl overflow-hidden"
         style={{
           maxWidth: '100%',
           aspectRatio: '16/9',
-          background: 'rgba(255, 255, 255, 0.9)',
+          background: 'rgba(255, 255, 255, 1)',
           border: '5px solid white',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <View className="relative w-full h-full">
-          <Common color="transparent" />
+        <Canvas
+          gl={{ toneMapping: THREE.AgXToneMapping }}
+          camera={{ position: [0, 0, 6], fov: 40 }}
+        >
+          {/* Lighting */}
+          <ambientLight />
+          <pointLight position={[20, 30, 10]} intensity={3} decay={0.2} />
+          <pointLight position={[-10, -10, -10]} color="blue" decay={0.2} />
+          
+          {/* Main Content */}
           <Dashboard />
-        </View>
+          
+          {/* Optional Controls */}
+          <OrbitControls enableZoom={false} />
+        </Canvas>
       </div>
     </div>
   )
