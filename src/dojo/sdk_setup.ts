@@ -3,6 +3,7 @@ import { schema, ZkttSchemaType } from '@/dojo/bindings/models.gen'
 import manifest from "../dojo/manifest_dev.json"
 
 import { DojoProvider } from "@dojoengine/core";
+import { Entities, ToriiClient } from '@dojoengine/torii-wasm'
 
 export const dojoProvider = (rpcUrl: string) =>
   new DojoProvider(manifest, rpcUrl);
@@ -10,7 +11,7 @@ export const dojoProvider = (rpcUrl: string) =>
 
 // Initialize the Dojo SDK with your custom schema
 export const getSDK = async () => {
-  const {props} = getInitialProps();
+  const {props} = getEnv();
   return await init<ZkttSchemaType>(
     {
       client: {
@@ -30,7 +31,12 @@ export const getSDK = async () => {
   );
 }
 
-export const getInitialProps = () => {
+export const getAllEntities = async (limit: number, offset: number): Promise<Entities> => {
+  let torii: ToriiClient = await getTorii(await getSDK());
+  return torii.getAllEntities(limit, offset);
+}
+
+export const getEnv = () => {
   // Access environment variables
   const { RPC_URL, TORII_URL, RELAY_URL, CHAIN_ID, WORLD_ADDRESS } = process.env;
 
@@ -45,8 +51,8 @@ export const getInitialProps = () => {
   };
 };
 
-export const dojoSDK = async () => await getSDK();
-
-export default async function Torii(dojoSDK: SDK<ZkttSchemaType>) {
+export default async function getTorii(dojoSDK: SDK<ZkttSchemaType>) {
   return dojoSDK.client;
 }
+
+console.log(getAllEntities(10, 0));
