@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 
 interface DashboardProps {
   isWalletConnected: boolean
+  setGameView: (isGameView: boolean) => void
 }
 
 /**
@@ -26,7 +27,7 @@ interface DashboardProps {
  * - Flexbox layout for vertical button arrangement
  * - Consistent button styling with hover effects
  */
-export function Dashboard({ isWalletConnected }: DashboardProps) {
+export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
   const texture = useLoader(TextureLoader, '/img/zktt_square_transparent.png')
   const logoGroupRef = useRef<Group>(null)
   const [isVisible, setIsVisible] = useState(false)
@@ -93,7 +94,7 @@ export function Dashboard({ isWalletConnected }: DashboardProps) {
           >
             <Button 
               className="px-14 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
-              onClick={() => console.log('Enter clicked')}
+              onClick={() => setGameView(true)}
             >
               ENTER
             </Button>

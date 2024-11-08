@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
+import { GameSession } from '@/pages/GameSession'
 import { CardSprayManager } from '../vfx/CardSprayManager'
 import { Volume } from '@/components/sfx/Volume'
 import { useWallet } from '@/context/WalletContext'
@@ -26,14 +27,21 @@ export default function GameCanvas() {
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <Canvas
-          gl={{ toneMapping: THREE.NoToneMapping }}
-          camera={{ position: [0, 0, 6], fov: 40 }}
-        >
-          <Volume />
-          <CardSprayManager isActive={isDashboardView} />
-          <Dashboard isWalletConnected={isWalletConnected} />
-        </Canvas>
+        {isDashboardView ? (
+          <Canvas
+            gl={{ toneMapping: THREE.NoToneMapping }}
+            camera={{ position: [0, 0, 6], fov: 40 }}
+          >
+            <Volume />
+            <CardSprayManager isActive={isDashboardView} />
+            <Dashboard 
+              isWalletConnected={isWalletConnected}
+              setGameView={setIsDashboardView}
+            />
+          </Canvas>
+        ) : (
+          <GameSession onExit={() => setIsDashboardView(true)} />
+        )}
       </div>
     </div>
   )
