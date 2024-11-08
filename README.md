@@ -1,6 +1,6 @@
 # zktt-app-nextjs
 
-## Installation
+## Front End Installation
 
 `
 yarn install
@@ -26,6 +26,12 @@ Start the production server:
 yarn start
 `
 
+## Smart Contract Setup
+
+`
+TBC
+`
+
 ## Available Scripts
 
 - `yarn dev` - Start development server with turbo
@@ -34,4 +40,3 @@ yarn start
 - `yarn lint` - Run ESLint with auto-fix
 - `yarn analyze` - Analyze bundle size
 - `yarn prettier` - Check code formatting
-
