@@ -1,19 +1,27 @@
-import { Chain, mainnet, sepolia } from '@starknet-react/chains'
-import { Connector, StarknetConfig, starkscan } from '@starknet-react/core'
-import { PropsWithChildren } from 'react'
-import CartridgeConnector from '@cartridge/connector'
-import { RpcProvider, shortString } from 'starknet'
+import ControllerConnector from '@cartridge/connector/controller'
+import { mainnet, sepolia } from '@starknet-react/chains'
+import { StarknetConfig, starkscan } from '@starknet-react/core'
+import { RpcProvider } from 'starknet'
+
+import type { Chain } from '@starknet-react/chains'
+import type { PropsWithChildren } from 'react'
+
 
 // hard coded contract address temporary
-const ACTIONS_ADDRESS='0x0036e4506b35e6dfb301d437c95f74b3e1f4f82da5d8841bec894bb8de29ec13';
+const ACTIONS_ADDRESS='0x009c4382dc6a6e9813dfe097dc5f8bedabaa94ba19c1ea073c9d903f224a9784';
 export function StarknetProvider({ children }: PropsWithChildren) {
   return (
-    <StarknetConfig autoConnect chains={[sepolia]} connectors={[cartridge as unknown as Connector]} explorer={starkscan} provider={provider}>
+    <StarknetConfig 
+    autoConnect 
+    chains={[sepolia]} 
+    connectors={[cartridge]} 
+    explorer={starkscan} 
+    provider={provider}>
       {children}
     </StarknetConfig>
   )
 }
-const cartridge = new CartridgeConnector({
+const cartridge = new ControllerConnector({
   policies: [
     {
       target: ACTIONS_ADDRESS,
@@ -59,9 +67,6 @@ const cartridge = new CartridgeConnector({
   url: 'https://x.cartridge.gg',
   rpc: 'https://api.cartridge.gg/x/starknet/sepolia',
   //rpc: 'http://0.0.0.0:5050',
-  paymaster: {
-    caller: shortString.encodeShortString('ANY_CALLER'),
-  },
   theme: 'abc',
 })
 function provider(chain: Chain) {

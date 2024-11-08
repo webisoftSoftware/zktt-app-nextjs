@@ -2,7 +2,7 @@
   "name": "react-three-next",
   "version": "2.0.0",
   "authors": [
-    "Renaud ROHLINGER <https://twitter.com/onirenaud>"
+    "zKTT"
   ],
   "license": "MIT",
   "private": true,
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@cartridge/connector": "^0.5.0-alpha.3",
+    "@cartridge/controller": "^0.5.0-alpha.3",
     "@ducanh2912/next-pwa": "^10.0.0",
     "@next/bundle-analyzer": "^14.0.4",
     "@react-three/drei": "^9.114.4",

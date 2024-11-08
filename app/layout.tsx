@@ -3,8 +3,8 @@ import '@/global.css'
 import Header from '../src/components/ui/Header'
 
 export const metadata = {
-  title: 'Next.js + Three.js',
-  description: 'A minimal starter for Nextjs + React-three-fiber and Threejs.',
+  title: 'zKTT Demo & MVP | SN HH BKK 2024',
+  description: 'Built with love.',
 }
 
 type LayoutProps = {

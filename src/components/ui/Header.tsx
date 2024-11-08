@@ -1,5 +1,3 @@
-// @ts-nocheck 
-
 "use client";
 
 import Link from "next/link";
@@ -9,14 +7,7 @@ import Image from 'next/image'
 import { useEffect, useState } from "react"
 import { StarknetProvider } from "@/controller/StarknetProvider"
 import { useAccount, useConnect, useDisconnect } from "@starknet-react/core"
-import CartridgeConnector from "@cartridge/connector"
-import { Plus_Jakarta_Sans } from 'next/font/google'
-
-// fonts
-const plusJakarta = Plus_Jakarta_Sans({
-    subsets: ['latin'],
-    weight: ['500'],
-  })
+import ControllerConnector from '@cartridge/connector/controller'
 
 // controller integration
 export function ConnectWallet() {
@@ -24,7 +15,7 @@ export function ConnectWallet() {
 	const { disconnect } = useDisconnect();
 	const { address } = useAccount();
 
-	const connector = connectors[0] as unknown as CartridgeConnector;
+	const connector = connectors[0] as unknown as ControllerConnector;
 
 	const [username, setUsername] = useState<string>();
 	useEffect(() => {
@@ -33,30 +24,44 @@ export function ConnectWallet() {
 	}, [address, connector]);
 
 	return (
+
 		<div>
+			<button
+				className="btn bg-white text-black hover:bg-gray-100 transition-colors w-full text-lg px-4 py-2 rounded-lg border-black font-normal lowercase opacity-90"
+				onClick={(e) => {
+					e.preventDefault();
+					console.log("Button clicked!"); // Debug log
+						address ? disconnect() : connect({ connector });
+				}}
+			>
+				{address ? "Disconnect" : "Connect Wallet"}
+			</button>
+
 			{address && (
 				<>
 					<p>Account: {address} </p>
 					{username && <p>Username: {username}</p>}
 				</>
 			)}
-
-			<Link
-				className={`btn text-black hover:bg-black-600 w-full text-2xl ${plusJakarta.className}`}
-				onClick={() => {
-					address ? disconnect() : connect({ connector });
-				}}
-				href={""}
-			>
-				{address ? "Disconnect" : "Connect"}
-			</Link>
+			
 		</div>
 	);
 }
 
 export default function Header({ nav = true }: { nav?: boolean }) {
 	return (
-		<div className="absolute top-4 right-8">
+		<div className="absolute top-4 w-full px-8 flex justify-between items-center">
+			<div className="flex items-center gap-4">
+				<Link href="/">
+					<Image 
+						src="/img/zktt_square_transparent.png"
+						alt="ZKTT Logo"
+						width={42}
+						height={42}
+						className="h-[38px] w-auto" // Matches typical button height
+					/>
+				</Link>
+			</div>
 			<StarknetProvider>
 				<ConnectWallet></ConnectWallet>
 			</StarknetProvider>
