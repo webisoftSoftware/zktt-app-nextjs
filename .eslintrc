@@ -5,5 +5,12 @@
     "no-console": "warn",
     "no-var": "error",
     "no-html-link-for-pages": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "project": "./tsconfig.json"
+      }
+    }
   }
 }
