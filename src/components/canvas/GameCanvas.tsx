@@ -15,9 +15,10 @@ export default function GameCanvas() {
     <div className="flex min-h-screen justify-center items-center p-4 sm:p-8">
       <div 
         ref={containerRef}
-        className="relative w-full max-w-[1280px] rounded-2xl overflow-hidden"
+        className="relative rounded-2xl overflow-hidden"
         style={{
-          aspectRatio: '16/9',
+          width: '1280px',
+          height: '720px',
           background: 'rgba(255, 255, 255, 1)',
           border: '5px solid white',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',

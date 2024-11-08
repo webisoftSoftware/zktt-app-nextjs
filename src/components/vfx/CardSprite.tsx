@@ -68,7 +68,8 @@ const cardImages = [
 
 export function CardSprite({ position, scale, velocity }: CardSpriteProps) {
   const meshRef = useRef<THREE.Mesh>(null)
-  const texture = useLoader(THREE.TextureLoader, cardImages[Math.floor(Math.random() * cardImages.length)])
+  const selectedImageRef = useRef(cardImages[Math.floor(Math.random() * cardImages.length)])
+  const texture = useLoader(THREE.TextureLoader, selectedImageRef.current)
   const velocityRef = useRef<[number, number, number]>(velocity)
 
   useFrame((_, delta) => {
