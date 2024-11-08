@@ -23,27 +23,32 @@ export function ConnectWallet() {
 		connector.username()?.then((n) => setUsername(n));
 	}, [address, connector]);
 
-	return (
+	// Add helper function to format address
+	const formatAddress = (addr: string) => {
+		return `${addr.slice(0, 4)}...${addr.slice(-4)}`;
+	};
 
+	return (
 		<div>
 			<button
 				className="text-black transition-colors w-full text-lg px-4 py-2 rounded-lg border-black font-normal lowercase"
 				onClick={(e) => {
 					e.preventDefault();
-					console.log("Button clicked!"); // Debug log
-						address ? disconnect() : connect({ connector });
+					address ? disconnect() : connect({ connector });
 				}}
 			>
-				{address ? "Disconnect" : "Connect Wallet"}
+				{address ? (
+					<div className="flex flex-col items-center">
+						<span className="flex items-center gap-2 text-black">
+							{username && <span>{username}</span>}
+							{username && "•"}  {formatAddress(address)}
+						</span>
+						<span className="text-black hover:text-gray-700">disconnect</span>
+					</div>
+				) : (
+					"Connect Wallet"
+				)}
 			</button>
-
-			{address && (
-				<>
-					<p>Account: {address} </p>
-					{username && <p>Username: {username}</p>}
-				</>
-			)}
-			
 		</div>
 	);
 }
