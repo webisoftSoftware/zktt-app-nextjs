@@ -12,6 +12,13 @@
   "dependencies": {
     "@cartridge/connector": "^0.5.0-alpha.3",
     "@cartridge/controller": "^0.5.0-alpha.3",
+    "@dojoengine/core": "^1.0.0-alpha.28",
+    "@dojoengine/react": "^1.0.0-alpha.28",
+    "@dojoengine/recs": "^2.0.13",
+    "@dojoengine/sdk": "^1.0.0-alpha.28",
+    "@dojoengine/state": "^1.0.0-alpha.28",
+    "@dojoengine/torii-client": "^1.0.0-alpha.28",
+    "@dojoengine/utils": "^1.0.0-alpha.28",
     "@ducanh2912/next-pwa": "^10.0.0",
     "@next/bundle-analyzer": "^14.0.4",
     "@react-three/drei": "^9.114.4",

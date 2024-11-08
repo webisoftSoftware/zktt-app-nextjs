@@ -41,6 +41,8 @@ export default function Head() {
       <link rel='manifest' href='/manifest.json' />
       <link rel='mask-icon' color='#000000' href='/icons/safari-pinned-tab.svg' />
       <link rel='apple-touch-startup-image' href='/startup.png' />
+      <link rel='icon' href='/favicon.ico' />
+      <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico"></link>
 
       {/* Meta Tags for HTML pages on Mobile */}
       {/* <meta name="format-detection" content="telephone=yes"/>

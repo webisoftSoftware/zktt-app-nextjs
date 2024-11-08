@@ -27,7 +27,7 @@ export function ConnectWallet() {
 
 		<div>
 			<button
-				className="btn bg-white text-black hover:bg-gray-100 transition-colors w-full text-lg px-4 py-2 rounded-lg border-black font-normal lowercase opacity-90"
+				className="btn text-black transition-colors w-full text-lg px-4 py-2 rounded-lg border-black font-normal lowercase"
 				onClick={(e) => {
 					e.preventDefault();
 					console.log("Button clicked!"); // Debug log
@@ -50,7 +50,7 @@ export function ConnectWallet() {
 
 export default function Header({ nav = true }: { nav?: boolean }) {
 	return (
-		<div className="absolute top-4 w-full px-8 flex justify-between items-center">
+		<div className="absolute top-4 w-full px-8 flex justify-between items-center z-50">
 			<div className="flex items-center gap-4">
 				<Link href="/">
 					<Image 
@@ -58,7 +58,7 @@ export default function Header({ nav = true }: { nav?: boolean }) {
 						alt="ZKTT Logo"
 						width={42}
 						height={42}
-						className="h-[38px] w-auto" // Matches typical button height
+						className="h-[42px] w-auto" // Matches typical button height
 					/>
 				</Link>
 			</div>
