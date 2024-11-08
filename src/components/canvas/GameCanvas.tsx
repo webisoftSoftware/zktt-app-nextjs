@@ -10,15 +10,13 @@ import { CardSprayManager } from '../vfx/CardSprayManager'
 export default function GameCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isDashboardView, setIsDashboardView] = useState(true)
-  // TODO: move and condense this dashboard view to other components?
 
   return (
-    <div className="flex min-h-screen justify-center items-center p-8">
+    <div className="flex min-h-screen justify-center items-center p-4 sm:p-8">
       <div 
         ref={containerRef}
-        className="relative w-[1280px] h-[720px] rounded-2xl overflow-hidden"
+        className="relative w-full max-w-[1280px] rounded-2xl overflow-hidden"
         style={{
-          maxWidth: '100%',
           aspectRatio: '16/9',
           background: 'rgba(255, 255, 255, 1)',
           border: '5px solid white',
@@ -26,14 +24,9 @@ export default function GameCanvas() {
         }}
       >
         <Canvas
-          gl={{ toneMapping: THREE.AgXToneMapping }}
+          gl={{ toneMapping: THREE.NoToneMapping }}
           camera={{ position: [0, 0, 6], fov: 40 }}
         >
-          {/* Lighting */}
-          <ambientLight />
-          <pointLight position={[20, 30, 10]} intensity={3} decay={0.2} />
-          <pointLight position={[-10, -10, -10]} color="blue" decay={0.2} />
-          
           {/* Main Content */}
           <CardSprayManager isActive={isDashboardView} />
           <Dashboard />

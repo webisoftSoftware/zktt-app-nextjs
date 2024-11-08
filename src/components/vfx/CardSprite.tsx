@@ -99,7 +99,11 @@ export function CardSprite({ position, scale, velocity }: CardSpriteProps) {
   return (
     <mesh ref={meshRef} position={position}>
       <planeGeometry args={[scale * 0.752, scale * 1.052, 1]} />
-      <meshStandardMaterial map={texture} opacity={1} />
+      <meshBasicMaterial 
+        map={texture} 
+        transparent={true}
+        opacity={1} 
+      />
     </mesh>
   )
 }
