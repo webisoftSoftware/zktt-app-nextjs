@@ -1,9 +1,13 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Group, TextureLoader } from 'three'
 import { useLoader } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import { Button } from '@/components/ui/Button'
+
+interface DashboardProps {
+  isWalletConnected: boolean
+}
 
 /**
  * Dashboard Component
@@ -11,20 +15,26 @@ import { Button } from '@/components/ui/Button'
  * 
  * Key features:
  * - Renders HTML elements within Three.js scene
- * - Contains primary navigation buttons
+ * - Contains primary navigation buttons that appear when wallet is connected
  * - Maintains consistent styling with app theme
  * 
  * Implementation details:
  * - Uses @react-three/drei's Html component for 3D positioning
+ * - Buttons fade in/out based on wallet connection status
  * - Center prop ensures content is centered in viewport
  * - pointerEvents: 'auto' enables button interaction
  * - Flexbox layout for vertical button arrangement
  * - Consistent button styling with hover effects
- * - Backdrop blur for glass-like effect
  */
-export function Dashboard() {
+export function Dashboard({ isWalletConnected }: DashboardProps) {
   const texture = useLoader(TextureLoader, '/img/zktt_square_transparent.png')
   const logoGroupRef = useRef<Group>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  // Handle fade animation
+  useEffect(() => {
+    setIsVisible(isWalletConnected)
+  }, [isWalletConnected])
 
   useFrame((_, delta) => {
     if (!logoGroupRef.current) return
@@ -75,7 +85,10 @@ export function Dashboard() {
             style={{ 
               pointerEvents: 'auto',
               position: 'relative',
-              zIndex: 1
+              zIndex: 1,
+              opacity: isVisible ? 1 : 0,
+              transition: 'opacity 0.7s ease-in-out',
+              visibility: isVisible ? 'visible' : 'hidden'
             }}
           >
             <Button 

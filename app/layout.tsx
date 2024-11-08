@@ -8,20 +8,32 @@ export const metadata = {
   description: 'Built with love.',
 }
 
-type LayoutProps = {
-  children: React.ReactNode;
-};
+// Create a client wrapper component
+const ClientProviders = ({ children }: { children: React.ReactNode }) => {
+  const { StarknetProvider } = require('@/controller/StarknetProvider')
+  const { WalletProvider } = require('@/context/WalletContext')
 
-export default function RootLayout({ children }: LayoutProps) {
+  return (
+    <StarknetProvider>
+      <WalletProvider>
+        {children}
+      </WalletProvider>
+    </StarknetProvider>
+  )
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='en' className='antialiased'>
       <head />
       <body>
+        <ClientProviders>
           <Header />
           <main>
             <Layout>{children}</Layout>
           </main>
           <Footer />
+        </ClientProviders>
       </body>
     </html>
   )

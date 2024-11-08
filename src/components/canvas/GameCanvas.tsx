@@ -2,15 +2,16 @@
 
 import { useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-// import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
 import { CardSprayManager } from '../vfx/CardSprayManager'
-import { Volume } from '@/components/sfx/Volume';
+import { Volume } from '@/components/sfx/Volume'
+import { useWallet } from '@/context/WalletContext'
 
 export default function GameCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isDashboardView, setIsDashboardView] = useState(true)
+  const { isWalletConnected } = useWallet()
 
   return (
     <div className="flex min-h-screen justify-center items-center">
@@ -30,12 +31,8 @@ export default function GameCanvas() {
           camera={{ position: [0, 0, 6], fov: 40 }}
         >
           <Volume />
-          {/* Main Content */}
           <CardSprayManager isActive={isDashboardView} />
-          <Dashboard />
-          
-          {/* Optional Controls */}
-          {/* <OrbitControls enableZoom={false} /> */}
+          <Dashboard isWalletConnected={isWalletConnected} />
         </Canvas>
       </div>
     </div>
