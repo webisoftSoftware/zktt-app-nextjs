@@ -73,14 +73,14 @@ export function Dashboard() {
             style={{ pointerEvents: 'auto' }}
           >
             <Button 
-              className="px-12 py-4 text-xl bg-white hover:bg-black/5 text-black border-2 border-black rounded-xl transition-all"
+              className="px-14 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
               onClick={() => console.log('Enter clicked')}
             >
               ENTER
             </Button>
     
             <Button 
-              className="px-7 py-4 text-xl bg-white hover:bg-black/5 text-black border-2 border-black rounded-xl transition-all"
+              className="px-10 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
               onClick={() => console.log('Settings clicked')}
             >
               SETTINGS

@@ -2,10 +2,11 @@
 
 import { useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+// import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
 import { CardSprayManager } from '../vfx/CardSprayManager'
+import { Volume } from '@/components/sfx/Volume';
 
 export default function GameCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -28,12 +29,13 @@ export default function GameCanvas() {
           gl={{ toneMapping: THREE.NoToneMapping }}
           camera={{ position: [0, 0, 6], fov: 40 }}
         >
+          <Volume />
           {/* Main Content */}
           <CardSprayManager isActive={isDashboardView} />
           <Dashboard />
           
           {/* Optional Controls */}
-          <OrbitControls enableZoom={false} />
+          {/* <OrbitControls enableZoom={false} /> */}
         </Canvas>
       </div>
     </div>
