@@ -1,13 +1,16 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
+import { CardSprayManager } from '../vfx/CardSprayManager'
 
 export default function GameCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [isDashboardView, setIsDashboardView] = useState(true)
+  // TODO: move and condense this dashboard view to other components?
 
   return (
     <div className="flex min-h-screen justify-center items-center p-8">
@@ -32,6 +35,7 @@ export default function GameCanvas() {
           <pointLight position={[-10, -10, -10]} color="blue" decay={0.2} />
           
           {/* Main Content */}
+          <CardSprayManager isActive={isDashboardView} />
           <Dashboard />
           
           {/* Optional Controls */}
