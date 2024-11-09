@@ -24,16 +24,7 @@ export function StarknetProvider({ children }: PropsWithChildren) {
 }
 const cartridge = new ControllerConnector({
   policies: [
-    {
-      target: PLAYER_ADDRESS,
-      method: 'join',
-      description: 'Join a new table game.',
-    },
-    {
-      target: GAME_ADDRESS,
-      method: 'start',
-      description: 'Start a game once everyone has joined.',
-    },
+    // ACTIONS_ADDRESS policies
     {
       target: ACTIONS_ADDRESS,
       method: 'draw',
@@ -54,10 +45,22 @@ const cartridge = new ControllerConnector({
       method: 'pay_fee',
       description: 'Pay a gas fee to recipient.',
     },
+    // GAME_ADDRESS policies
+    {
+      target: GAME_ADDRESS,
+      method: 'start',
+      description: 'Start a game once everyone has joined.',
+    },
     {
       target: GAME_ADDRESS,
       method: 'end_turn',
       description: 'End the current players turn.',
+    },
+    // PLAYER_ADDRESS policies
+    {
+      target: PLAYER_ADDRESS,
+      method: 'join',
+      description: 'Join a new table game.',
     },
     {
       target: PLAYER_ADDRESS,
