@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWallet } from '@/components/controller/WalletContext'
 import { Html } from '@react-three/drei'
@@ -9,11 +9,138 @@ interface GameSessionProps {
   isTestMode?: boolean;
 }
 
+// New component for game content
+function GameContent({ onExit, isTestMode }: GameSessionProps) {
+  const { viewport } = useThree()
+
+  return (
+    <>
+      <group position={[2.75, -1.65, 0]}>
+        <Html center>
+          <div className="text-black">menu</div>
+        </Html>
+        <mesh>
+          <planeGeometry args={[2, 0.75]} />
+          <meshBasicMaterial 
+            color="#000000"
+            wireframe={true}
+          />
+        </mesh>
+      </group>
+
+      <group position={[-3.4, 0, 0]}>
+        <Html center>
+          <div className="text-black">deck</div>
+        </Html>
+        <mesh>
+          <planeGeometry args={[0.75, 1.25]} />
+          <meshBasicMaterial 
+            color="#000000"
+            wireframe={true}
+          />
+        </mesh>
+      </group>
+
+      <group position={[3.4, 0, 0]}>
+        <Html center>
+          <div className="text-black">discard</div>
+        </Html>
+        <mesh>
+          <planeGeometry args={[0.75, 1.25]} />
+          <meshBasicMaterial 
+            color="#000000"
+            wireframe={true}
+          />
+        </mesh>
+      </group>
+
+      <group position={[0, -2, 0]}>
+        <Html center>
+          <div className="text-black">p1.hand</div>
+        </Html>
+        <mesh>
+          <planeGeometry args={[0.75, 1.25]} />
+          <meshBasicMaterial 
+            color="#000000"
+            wireframe={true}
+          />
+        </mesh>
+      </group>
+
+      <group position={[0, -0.75, 0]}>
+        <Html center>
+          <div className="text-black">p1.board</div>
+        </Html>
+        <mesh>
+          <planeGeometry args={[3.25, 0.75]} />
+          <meshBasicMaterial 
+            color="#000000"
+            wireframe={true}
+          />
+        </mesh>
+      </group>
+
+      <group position={[0, 2, 0]}>
+        <Html center>
+          <div className="text-black">p2.hand</div>
+        </Html>
+        <mesh>
+          <planeGeometry args={[0.75, 1.25]} />
+          <meshBasicMaterial 
+            color="#000000"
+            wireframe={true}
+          />
+        </mesh>
+      </group>
+
+      <group position={[0, 1.25, 0]}>
+        <Html center>
+          <div className="text-black">p2.board</div>
+        </Html>
+        <mesh>
+          <planeGeometry args={[3.25, 0.75]} />
+          <meshBasicMaterial 
+            color="#000000"
+            wireframe={true}
+          />
+        </mesh>
+      </group>
+
+      <group position={[-2.75, -1.65, 0]}>
+        <Html center>
+          <div className="text-black">actions</div>
+        </Html>
+        <mesh>
+          <planeGeometry args={[2, 0.75]} />
+          <meshBasicMaterial 
+            color="#000000" 
+            wireframe={true}
+          />
+        </mesh>
+      </group>
+
+      {isTestMode && (
+        <Html
+          transform={false}
+          style={{
+            position: 'relative',
+            top: '-255px',
+            right: '-400px',
+            margin: '0 auto',
+            justifyContent: 'center',
+          }}
+        >
+        </Html>
+      )}
+    </>
+  )
+}
+
+// Main component
 export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
   const { isWalletConnected } = useWallet()
   const [playerName, setPlayerName] = useState<string>('')
   
-  // Only check wallet connection if not in test mode
   useEffect(() => {
     if (!isTestMode && !isWalletConnected) {
       onExit()
@@ -26,57 +153,7 @@ export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
         gl={{ toneMapping: THREE.NoToneMapping }}
         camera={{ position: [0, 0, 6], fov: 40 }}
       >
-        {/* Game Board Area */}
-        <group position={[0, 0, 0]}>
-          <mesh>
-            <planeGeometry args={[10, 6]} />
-            <meshBasicMaterial color={isTestMode ? "#2a2a2a" : "#1a1a1a"} />
-          </mesh>
-        </group>
-
-        {/* Test Mode Indicator */}
-        {isTestMode && (
-          <Html
-            transform={false}
-            style={{
-              position: 'absolute',
-              top: '20px',
-              left: '20px',
-            }}
-          >
-            <div className="px-3 py-1 bg-yellow-500 text-black rounded-md">
-              Test Mode
-            </div>
-          </Html>
-        )}
-
-        {/* Player Hand Area */}
-        <group position={[0, -2, 1]}>
-          <Html center>
-            <div className="flex gap-4">
-              {/* Cards will be rendered here */}
-            </div>
-          </Html>
-        </group>
-
-        {/* Game Controls */}
-        <Html
-          transform={false}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-          }}
-        >
-          <div className="flex flex-col gap-4">
-            <button
-              className="px-4 py-2 bg-white text-black rounded-xl border-2 border-black hover:bg-black/5"
-              onClick={onExit}
-            >
-              Exit Game
-            </button>
-          </div>
-        </Html>
+        <GameContent onExit={onExit} isTestMode={isTestMode} />
       </Canvas>
     </div>
   )

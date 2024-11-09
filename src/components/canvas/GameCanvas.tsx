@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
@@ -23,6 +23,15 @@ export default function GameCanvas() {
   // Get wallet connection status from context
   const { isWalletConnected } = useWallet()
 
+  // TEMPORARY DEV HELPER - REMOVE BEFORE PRODUCTION
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsDashboardView(false)
+      setIsTestMode(true)
+    }, 1)
+    return () => clearTimeout(timer)
+  }, [])
+
   const handleViewChange = (isGameView: boolean, testMode: boolean = false) => {
     setIsTestMode(testMode)
     setIsDashboardView(!isGameView)
@@ -38,8 +47,8 @@ export default function GameCanvas() {
         style={{
           width: '960px',  // Fixed width for consistent layout
           height: '540px',  // 16:9 aspect ratio
-          background: 'rgba(255, 255, 255, 1)',
-          border: '5px solid white',
+          background: isDashboardView ? 'rgba(255, 255, 255, 1)' : (isTestMode ? '#ffffff' : '#ffffff'),
+          border: isDashboardView ? '5px solid white' : '5px solid rgba(255, 255, 255, 1)',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >

@@ -15,7 +15,7 @@ export default function Footer({ showLinks = true }: FooterProps) {
           {/* GitHub link */}
           <Link 
             href="https://github.com/webisoftSoftware/" 
-            className="hover:text-gray-600 text-lg"
+            className="hover:text-gray-600 text-base"
             target="_blank"           // Open in new tab
             rel="noopener noreferrer" // OP for external links
           >
@@ -28,7 +28,7 @@ export default function Footer({ showLinks = true }: FooterProps) {
           {/* x fka twitter */}
           <Link 
             href="https://x.com/zktabletop" 
-            className="hover:text-gray-600 text-lg"
+            className="hover:text-gray-600 text-base"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -38,9 +38,10 @@ export default function Footer({ showLinks = true }: FooterProps) {
       )}
       
       {/* email link */}
+      [temp info - 
       <Link 
         href="mailto:zktt.team@gmail.com" 
-        className="hover:text-gray-600 text-lg"
+        className="hover:text-gray-600 text-base"
       >
         get in touch
       </Link>

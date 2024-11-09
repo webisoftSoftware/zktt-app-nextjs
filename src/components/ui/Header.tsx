@@ -36,7 +36,7 @@ export function ConnectWallet() {
 		<div>
 			{/* Wallet connection button */}
 			<button
-				className="text-black transition-colors w-full text-lg px-4 py-2 rounded-lg border-black font-normal lowercase"
+				className="text-black transition-colors w-full text-base px-4 py-2 rounded-lg border-black font-normal lowercase"
 				onClick={(e) => {
 					e.preventDefault();
 					address ? disconnect() : connect({ connector });
