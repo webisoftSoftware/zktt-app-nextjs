@@ -26,8 +26,8 @@ export default function GameCanvas() {
   // TEMPORARY DEV HELPER - REMOVE BEFORE PRODUCTION
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsDashboardView(false)
-      setIsTestMode(true)
+      setIsDashboardView(true)
+      setIsTestMode(false)
     }, 1)
     return () => clearTimeout(timer)
   }, [])
