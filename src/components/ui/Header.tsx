@@ -17,19 +17,23 @@ export function ConnectWallet() {
 
 	const connector = connectors[0] as unknown as ControllerConnector;
 
+	// State for storing username
 	const [username, setUsername] = useState<string>();
+	
+	// Fetch username when address changes
 	useEffect(() => {
 		if (!address) return;
 		connector.username()?.then((n) => setUsername(n));
 	}, [address, connector]);
 
-	// Add helper function to format address
+	// Format wallet address for display
 	const formatAddress = (addr: string) => {
 		return `${addr.slice(0, 4)}...${addr.slice(-4)}`;
 	};
 
 	return (
 		<div>
+			{/* Wallet connection button */}
 			<button
 				className="text-black transition-colors w-full text-lg px-4 py-2 rounded-lg border-black font-normal lowercase"
 				onClick={(e) => {
@@ -37,6 +41,7 @@ export function ConnectWallet() {
 					address ? disconnect() : connect({ connector });
 				}}
 			>
+				{/* Show different content based on connection status */}
 				{address ? (
 					<div className="flex flex-col items-center">
 						<span className="flex items-center gap-2 text-black">
@@ -56,6 +61,7 @@ export function ConnectWallet() {
 export default function Header({ nav = true }: { nav?: boolean }) {
 	return (
 		<div className="absolute top-4 w-full px-8 flex justify-between items-center z-6">
+			{/* Logo and home link */}
 			<div className="flex items-center gap-4">
 				<Link href="/">
 					<Image 
@@ -67,6 +73,7 @@ export default function Header({ nav = true }: { nav?: boolean }) {
 					/>
 				</Link>
 			</div>
+			{/* Wallet connection wrapped in Starknet provider */}
 			<StarknetProvider>
 				<ConnectWallet></ConnectWallet>
 			</StarknetProvider>

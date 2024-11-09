@@ -3,10 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+
+  /* Star style below for checking margin/padding etc */
+
   /* * {
     box-sizing: border-box;
     outline: 1px dotted blue;
   } */
+   
 
   html,
   body,

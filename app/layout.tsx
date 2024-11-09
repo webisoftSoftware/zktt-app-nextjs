@@ -8,8 +8,10 @@ export const metadata = {
   description: 'Built with love.',
 }
 
-// Create a client wrapper component
+// Client wrapper component to handle Starknet and wallet providers
+// This needs to be client-side only due to wallet interactions
 const ClientProviders = ({ children }: { children: React.ReactNode }) => {
+  // Dynamic imports to ensure client-side only execution
   const { StarknetProvider } = require('@/components/controller/StarknetProvider')
   const { WalletProvider } = require('@/components/controller/WalletContext')
 
@@ -22,6 +24,7 @@ const ClientProviders = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
+// Root layout component that wraps the entire application
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='en' className='antialiased'>
