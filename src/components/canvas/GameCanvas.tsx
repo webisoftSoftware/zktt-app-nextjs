@@ -27,8 +27,8 @@ export default function GameCanvas() {
         ref={containerRef}
         className="relative rounded-2xl overflow-hidden"
         style={{
-          width: '1280px',  // Fixed width for consistent layout
-          height: '720px',  // 16:9 aspect ratio
+          width: '960px',  // Fixed width for consistent layout
+          height: '540px',  // 16:9 aspect ratio
           background: 'rgba(255, 255, 255, 1)',
           border: '5px solid white',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',

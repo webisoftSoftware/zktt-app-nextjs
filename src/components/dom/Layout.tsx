@@ -22,8 +22,8 @@ const Layout = ({ children }: LayoutProps) => {
       ref={ref}
       style={{
         position: 'relative',
-        width: '1280px',    // Fixed width for consistent layout
-        height: '720px',    // 16:9 aspect ratio
+        width: '960px',    // Fixed width for consistent layout
+        height: '540px',    // 16:9 aspect ratio
         margin: '0 auto',   // Center horizontally
         // Note: overflow: 'auto' is intentionally disabled
         // to prevent scrolling issues with Three.js

@@ -26,10 +26,10 @@ Start the production server:
 yarn start
 `
 
-## Smart Contract Setup
+## ngrok
 
 `
-TBC
+ngrok http 3000
 `
 
 ## Available Scripts

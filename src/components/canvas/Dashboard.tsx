@@ -72,7 +72,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
             width: '100%',
             pointerEvents: 'none',  // Allow click-through by default
             position: 'absolute',
-            bottom: '105px',
+            bottom: '70px',
             transform: 'none',
             zIndex: 1
           }}
@@ -82,12 +82,12 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
           <div 
             className="flex justify-center gap-7"
             style={{ 
-              pointerEvents: 'auto',  // Re-enable click events
+              pointerEvents: isVisible ? 'auto' : 'none',  // Disable clicks when wallet not connected
               position: 'relative',
               zIndex: 1,
-              opacity: isVisible ? 1 : 0,
-              transition: 'opacity 0.7s ease-in-out',
-              visibility: isVisible ? 'visible' : 'hidden'
+              opacity: isVisible ? 1 : 0.5,  // 25% opacity when not connected
+              transition: 'opacity 2.1s ease-in-out',
+              // Remove visibility property since we want to show the buttons at reduced opacity
             }}
           >
             {/* Enter game button */}
@@ -95,12 +95,19 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
               className="px-14 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
               onClick={() => setGameView(true)}
             >
-              ENTER
+              JOIN
+            </Button>
+
+            <Button 
+              className="px-14 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
+              onClick={() => setGameView(true)}
+            >
+              TEST
             </Button>
     
             {/* Settings button - currently logs to console */}
             <Button 
-              className="px-10 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
+              className="px-14 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
               onClick={() => console.log('Settings clicked')}
             >
               SETTINGS
