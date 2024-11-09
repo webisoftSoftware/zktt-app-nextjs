@@ -12,7 +12,6 @@ export function useContractController() {
   const [txnHash, setTxnHash] = useState<string>();
   const { account } = useAccount();
 
-  console.log("account", account);
   const executeTransaction = useCallback(
     async (calls: ContractCall[]) => {
       if (!account) {

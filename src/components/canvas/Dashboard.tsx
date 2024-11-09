@@ -6,6 +6,9 @@ import { Html } from '@react-three/drei'
 import { Button } from '@/components/ui/Button'
 import { useContractController } from '@/helpers/executeHelper'
 import { StarknetProvider } from "@/components/controller/StarknetProvider"
+import { useConnect } from "@starknet-react/core"
+import ControllerConnector from '@cartridge/connector/controller'
+import { shortString } from 'starknet'
 
 // Define props interface for component type safety
 interface DashboardProps {
@@ -46,14 +49,27 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
   const [isEntering, setIsEntering] = useState(false)
   const [isLeaving, setIsLeaving] = useState(false)
 
+  // Get connector to access username
+  const { connectors } = useConnect()
+  const connector = connectors[0] as unknown as ControllerConnector
+
   // Updated enter transaction handler
   const handleEnterGame = async () => {
     try {
       setIsEntering(true)
+      
+      // Fetch username from controller
+      const username = await connector.username()
+      if (!username) {
+        throw new Error("Username not found")
+      }
+      // Convert username to felt using shortString encoding
+      const serializedUsername = shortString.encodeShortString(username)
+
       await executeTransaction([{
         contractAddress: "0x0533bb2f5c1d6fcb65adc8960b9a0f80a8b2d6c3020bbb9691710e7ab69a0e6d",
         entrypoint: "join",
-        calldata: [0,7758188,3]
+        calldata: [0, serializedUsername, 3]
       }])
       setGameView(true)
     } catch (error) {
