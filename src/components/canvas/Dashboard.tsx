@@ -186,7 +186,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
             }}
           >
             {/* Join game button - updated with separate loading state */}
-            <Button 
+            {/* <Button 
               className="rounded-2xl border-4 border-black bg-white px-7 py-3 text-2xl text-black transition-all hover:bg-black/5"
               onClick={() => {
                 if (isWalletConnected) {
@@ -199,7 +199,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
             </Button>
 
             {/* Start game button */}
-            <Button 
+            {/* <Button 
               className="rounded-2xl border-4 border-black bg-white px-7 py-3 text-2xl text-black transition-all hover:bg-black/5"
               onClick={() => {
                 if (isWalletConnected) {
@@ -209,25 +209,38 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
               disabled={isStarting}
             >
               {isStarting ? 'STARTING...' : 'START'}
-            </Button>
+            </Button> */}
 
             {/* Test game button - updated with test loading state */}
-            <Button 
+            {/* <Button 
               className="rounded-2xl border-4 border-black bg-white px-8 py-3 text-2xl text-black transition-all hover:bg-black/5"
               onClick={handleTestGame}
               disabled={isTesting}
             >
               {isTesting ? 'TESTING...' : 'TEST'}
-            </Button>
+            </Button> */}
     
             {/* Leave game button - updated with separate loading state */}
-            <Button 
+            {/* <Button 
               className="rounded-2xl border-4 border-black bg-white px-7 py-3 text-2xl text-black transition-all hover:bg-black/5"
               onClick={handleLeaveGame}
               disabled={isLeaving}
             >
               {isLeaving ? 'LEAVING...' : 'LEAVE'}
+            </Button> */}
+            {/* Test game button - updated with test loading state */}
+            <Button 
+              className="rounded-2xl border-4 border-black bg-white px-14 py-3 text-2xl text-black transition-all hover:bg-black hover:text-white"
+              onClick={handleTestGame}
+              disabled={isTesting}
+            >
+              PLAY
             </Button>
+            <Button 
+              className="rounded-2xl border-4 border-black bg-white px-8 py-3 text-2xl text-black transition-all hover:bg-black hover:text-white"
+            >
+              SETTINGS
+            </Button> 
           </div>
         </Html>
       </group>
