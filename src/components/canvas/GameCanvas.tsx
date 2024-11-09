@@ -17,8 +17,16 @@ export default function GameCanvas() {
   // State to toggle between dashboard and game views
   const [isDashboardView, setIsDashboardView] = useState(true)
   
+  // State to toggle between test mode and normal mode
+  const [isTestMode, setIsTestMode] = useState(false)
+  
   // Get wallet connection status from context
   const { isWalletConnected } = useWallet()
+
+  const handleViewChange = (isGameView: boolean, testMode: boolean = false) => {
+    setIsTestMode(testMode)
+    setIsDashboardView(!isGameView)
+  }
 
   return (
     // Main container with centered content
@@ -28,8 +36,8 @@ export default function GameCanvas() {
         ref={containerRef}
         className="relative rounded-2xl overflow-hidden"
         style={{
-          width: '1280px',  // Fixed width for consistent layout
-          height: '720px',  // 16:9 aspect ratio
+          width: '960px',  // Fixed width for consistent layout
+          height: '540px',  // 16:9 aspect ratio
           background: 'rgba(255, 255, 255, 1)',
           border: '5px solid white',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
@@ -47,12 +55,15 @@ export default function GameCanvas() {
             <CardSprayManager isActive={isDashboardView} />
             <Dashboard 
               isWalletConnected={isWalletConnected}
-              setGameView={setIsDashboardView}
+              setGameView={handleViewChange}
             />
           </Canvas>
         ) : (
           // Game session view when dashboard is exited
-          <GameSession onExit={() => setIsDashboardView(true)} />
+          <GameSession 
+            onExit={() => handleViewChange(false)} 
+            isTestMode={isTestMode}
+          />
         )}
       </div>
     </div>

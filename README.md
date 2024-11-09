@@ -26,11 +26,18 @@ Start the production server:
 yarn start
 `
 
-## Smart Contract Setup
+## ngrok
 
 `
-TBC
+ngrok http 3000
 `
+
+## canvas size 16:9
+
+```
+width: '960px' 
+height: '540px'    
+```
 
 ## Available Scripts
 

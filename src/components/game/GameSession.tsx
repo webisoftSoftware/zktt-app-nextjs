@@ -5,19 +5,20 @@ import { useWallet } from '@/components/controller/WalletContext'
 import { Html } from '@react-three/drei'
 
 interface GameSessionProps {
-  onExit: () => void
+  onExit: () => void;
+  isTestMode?: boolean;
 }
 
-export function GameSession({ onExit }: GameSessionProps) {
+export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
   const { isWalletConnected } = useWallet()
   const [playerName, setPlayerName] = useState<string>('')
   
-  // Ensure wallet is connected
+  // Only check wallet connection if not in test mode
   useEffect(() => {
-    if (!isWalletConnected) {
+    if (!isTestMode && !isWalletConnected) {
       onExit()
     }
-  }, [isWalletConnected, onExit])
+  }, [isWalletConnected, onExit, isTestMode])
 
   return (
     <div className="w-full h-full">
@@ -29,9 +30,25 @@ export function GameSession({ onExit }: GameSessionProps) {
         <group position={[0, 0, 0]}>
           <mesh>
             <planeGeometry args={[10, 6]} />
-            <meshBasicMaterial color="#1a1a1a" />
+            <meshBasicMaterial color={isTestMode ? "#2a2a2a" : "#1a1a1a"} />
           </mesh>
         </group>
+
+        {/* Test Mode Indicator */}
+        {isTestMode && (
+          <Html
+            transform={false}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              left: '20px',
+            }}
+          >
+            <div className="px-3 py-1 bg-yellow-500 text-black rounded-md">
+              Test Mode
+            </div>
+          </Html>
+        )}
 
         {/* Player Hand Area */}
         <group position={[0, -2, 1]}>

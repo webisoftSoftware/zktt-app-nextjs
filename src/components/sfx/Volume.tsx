@@ -8,18 +8,18 @@ export function Volume() {
   return (
     <Html
       transform={false}
-      className="fixed top-[-342] right-[-621] pointer-events-auto"
+      className="fixed top-[-255] right-[-465] pointer-events-auto"
     >
       <div className="cursor-pointer">
         <div 
           onClick={() => setIsVolumeOn(!isVolumeOn)}
-          className="w-7 h-7 transition-opacity hover:opacity-70"
+          className="w-5 h-5 transition-opacity hover:opacity-70"
         >
           <Image
             src={isVolumeOn ? '/img/vol_on.png' : '/img/vol_off.png'}
             alt={isVolumeOn ? 'Volume On' : 'Volume Off'}
-            width={35}
-            height={35}
+            width={21}
+            height={21}
             className="w-full h-full"
           />
         </div>
