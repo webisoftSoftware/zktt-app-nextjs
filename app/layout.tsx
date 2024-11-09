@@ -10,8 +10,8 @@ export const metadata = {
 
 // Create a client wrapper component
 const ClientProviders = ({ children }: { children: React.ReactNode }) => {
-  const { StarknetProvider } = require('@/controller/StarknetProvider')
-  const { WalletProvider } = require('@/context/WalletContext')
+  const { StarknetProvider } = require('@/components/controller/StarknetProvider')
+  const { WalletProvider } = require('@/components/controller/WalletContext')
 
   return (
     <StarknetProvider>

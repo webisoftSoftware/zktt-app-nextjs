@@ -5,7 +5,7 @@ import Image from 'next/image'
 
 // controller imports
 import { useEffect, useState } from "react"
-import { StarknetProvider } from "@/controller/StarknetProvider"
+import { StarknetProvider } from "@/components/controller/StarknetProvider"
 import { useAccount, useConnect, useDisconnect } from "@starknet-react/core"
 import ControllerConnector from '@cartridge/connector/controller'
 

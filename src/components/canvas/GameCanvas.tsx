@@ -4,10 +4,10 @@ import { useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
-import { GameSession } from '@/pages/GameSession'
+import { GameSession } from '@/components/game/GameSession'
 import { CardSprayManager } from '../vfx/CardSprayManager'
 import { Volume } from '@/components/sfx/Volume'
-import { useWallet } from '@/context/WalletContext'
+import { useWallet } from '@/components/controller/WalletContext'
 
 export default function GameCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
