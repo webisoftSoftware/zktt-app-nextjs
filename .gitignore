@@ -12,6 +12,8 @@
 *.pem
 
 dist/
+/public/workbox-*.js
+/public/sw.js
 
 # debug
 npm-debug.log*
