@@ -12,7 +12,7 @@ export function PlayAudio({ isVolumeOn }: PlayAudioProps) {
   useEffect(() => {
     if (audioRef.current) {
       // Set initial properties
-      audioRef.current.volume = 0.25
+      audioRef.current.volume = 0.2
       audioRef.current.muted = true
       audioRef.current.loop = true
 
