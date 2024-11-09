@@ -46,7 +46,8 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
   const { executeTransaction, submitted } = useContractController()
 
   // Separate submission states for each action
-  const [isEntering, setIsEntering] = useState(false)
+  const [isStarting, setIsStarting] = useState(false)
+  const [isJoining, setIsJoining] = useState(false)
   const [isTesting, setIsTesting] = useState(false)
   const [isLeaving, setIsLeaving] = useState(false)
 
@@ -54,10 +55,11 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
   const { connectors } = useConnect()
   const connector = connectors[0] as unknown as ControllerConnector
 
-  // Updated enter transaction handler
-  const handleEnterGame = async () => {
+  // Updated join transaction handler
+
+  const handleJoinGame = async () => {
     try {
-      setIsEntering(true)
+      setIsJoining(true)
       
       // Fetch username from controller
       const username = await connector.username()
@@ -74,9 +76,25 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
       }])
       setGameView(true)
     } catch (error) {
-      console.error("Failed to enter game:", error)
+      console.error("Failed to join game:", error)
     } finally {
-      setIsEntering(false)
+      setIsJoining(false)
+    }
+  }
+
+  // Rename handleJoinGame to handleStartGame
+  const handleStartGame = async () => {
+    try {
+      setIsStarting(true)
+      await executeTransaction([{
+        contractAddress: "0x076f8d509dac11e7db93304f89b3c13fecef38b92c9b77f46f610e67051aebc5",
+        entrypoint: "start",
+        calldata: []
+      }])
+    } catch (error) {
+      console.error("Failed to join:", error)
+    } finally {
+      setIsStarting(false)
     }
   }
 
@@ -108,6 +126,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
       setIsLeaving(false)
     }
   }
+
 
   return (
     <>
@@ -142,7 +161,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
           center
           style={{
             width: '100%',
-            pointerEvents: 'none',  // Allow click-through by default
+            pointerEvents: 'all',  // Changed from 'none' to 'all' to allow click events
             position: 'absolute',
             bottom: '70px',
             transform: 'none',
@@ -154,26 +173,35 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
           <div 
             className="flex justify-center gap-7"
             style={{ 
-              pointerEvents: isVisible ? 'auto' : 'none',  // Disable clicks when wallet not connected
+              pointerEvents: isVisible ? 'all' : 'none',  // Changed from 'auto' to 'all'
               position: 'relative',
               zIndex: 1,
-              opacity: isVisible ? 1 : 0,  // 25% opacity when not connected
+              opacity: isVisible ? 1 : 1,  // Fixed opacity values
               transition: 'opacity 2.1s ease-in-out',
               // Remove visibility property since we want to show the buttons at reduced opacity
             }}
           >
-            {/* Enter game button - updated with separate loading state */}
+            {/* Join game button - updated with separate loading state */}
             <Button 
-              className="px-10 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
-              onClick={handleEnterGame}
-              disabled={isEntering}
+              className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
+              onClick={handleJoinGame}
+              disabled={isJoining}
             >
-              {isEntering ? 'JOINING...' : 'ENTER'}
+              {isJoining ? 'WAITING...' : 'READY'}
+            </Button>
+
+            {/* Update button text and handlers */}
+            <Button 
+              className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
+              onClick={handleStartGame}
+              disabled={isStarting}
+            >
+              {isStarting ? 'STARTING...' : 'START'}
             </Button>
 
             {/* Test game button - updated with test loading state */}
             <Button 
-              className="px-10 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
+              className="px-8 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
               onClick={handleTestGame}
               disabled={isTesting}
             >
@@ -182,7 +210,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
     
             {/* Leave game button - updated with separate loading state */}
             <Button 
-              className="px-10 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
+              className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
               onClick={handleLeaveGame}
               disabled={isLeaving}
             >
