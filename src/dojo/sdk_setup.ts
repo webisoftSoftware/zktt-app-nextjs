@@ -67,10 +67,10 @@ export const getEnv = () => {
 export default async function InitDojo() {
   const { props } = getEnv();
   // Initialize the SDK to get the torii client.
-  let sdk = await getSDK();
+  const sdk = await getSDK();
 
   // Initialize the Dojo provider with the manifest and RPC URL to get the contracts in TS.
-  let contracts = await setupWorld(dojoProvider(props.rpcUrl));
+  const contracts = await setupWorld(dojoProvider(props.rpcUrl));
   console.log(sdk);
   console.log(contracts);
   return {

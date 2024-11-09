@@ -22,7 +22,7 @@ const usePostProcess = () => {
   const [{ dpr }, size, gl] = useThree((s) => [s.viewport, s.size, s.gl] as const);
 
   const [screenCamera, screenScene, screen, renderTarget] = useMemo(() => {
-    let screenScene = new THREE.Scene();
+    const screenScene = new THREE.Scene();
     const screenCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     const renderTarget = new THREE.WebGLRenderTarget(512, 512, { samples: 4, colorSpace: gl.outputColorSpace });

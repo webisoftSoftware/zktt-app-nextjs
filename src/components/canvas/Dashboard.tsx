@@ -185,7 +185,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
           >
             {/* Join game button - updated with separate loading state */}
             <Button 
-              className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
+              className="rounded-2xl border-4 border-black bg-white px-7 py-3 text-2xl text-black transition-all hover:bg-black/5"
               onClick={() => {
                 if (isWalletConnected) {
                   handleJoinGame()
@@ -198,7 +198,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
 
             {/* Start game button */}
             <Button 
-              className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
+              className="rounded-2xl border-4 border-black bg-white px-7 py-3 text-2xl text-black transition-all hover:bg-black/5"
               onClick={() => {
                 if (isWalletConnected) {
                   handleStartGame()
@@ -211,7 +211,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
 
             {/* Test game button - updated with test loading state */}
             <Button 
-              className="px-8 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
+              className="rounded-2xl border-4 border-black bg-white px-8 py-3 text-2xl text-black transition-all hover:bg-black/5"
               onClick={handleTestGame}
               disabled={isTesting}
             >
@@ -220,7 +220,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
     
             {/* Leave game button - updated with separate loading state */}
             <Button 
-              className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
+              className="rounded-2xl border-4 border-black bg-white px-7 py-3 text-2xl text-black transition-all hover:bg-black/5"
               onClick={handleLeaveGame}
               disabled={isLeaving}
             >
