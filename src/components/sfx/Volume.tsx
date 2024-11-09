@@ -31,7 +31,7 @@ export function Volume() {
             alt={isVolumeOn ? 'Volume On' : 'Volume Off'}
             width={21}
             height={21}
-            className="size-full"
+            className="size-full filter-white"
           />
         </div>
       </div>
