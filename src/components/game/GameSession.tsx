@@ -37,31 +37,41 @@ const XZPlane = ({ size }: PlaneProps) => (
     rotation={[1.5 * Math.PI, 0, 0]}
     position={[0, 0, 0]}
   >
-    <meshStandardMaterial 
-      attach="material" 
-      color="#000000" 
-      wireframe 
-      opacity={0.30}  
-      transparent 
+    <shaderMaterial
+      attach="material"
+      vertexShader={`
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `}
+      fragmentShader={`
+        varying vec2 vUv;
+        void main() {
+          vec3 color = mix(vec3(0.3), vec3(0.7), vUv.y); // Darker gradient from dark to medium gray
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `}
     />
   </Plane>
 )
 
-const XYPlane = ({ size }: PlaneProps) => (
-  <Plane
-    args={[size, size, size, size]}
-    rotation={[0, 0, 0]}
-    position={[0, 0, 0]}
-  >
-    <meshStandardMaterial 
-      attach="material" 
-      color="pink" 
-      wireframe 
-      opacity={0.1}  
-      transparent 
-    />
-  </Plane>
-)
+// const XYPlane = ({ size }: PlaneProps) => (
+//   <Plane
+//     args={[size, size, size, size]}
+//     rotation={[0, 0, 0]}
+//     position={[0, 0, 0]}
+//   >
+//     <meshStandardMaterial 
+//       attach="material" 
+//       color="pink" 
+//       wireframe 
+//       opacity={0.1}  
+//       transparent 
+//     />
+//   </Plane>
+// )
 
 const YZPlane = ({ size }: PlaneProps) => (
   <Plane
@@ -82,9 +92,9 @@ const YZPlane = ({ size }: PlaneProps) => (
 function Grid({ size }: PlaneProps) {
   return (
     <group>
-      <XZPlane size={size} />
-      <XYPlane size={size} />
-      <YZPlane size={size} />
+      <XZPlane size={size * 10} />
+      {/* <XYPlane size={size} /> */}
+      {/* <YZPlane size={size} /> */}
     </group>
   )
 }
@@ -169,6 +179,31 @@ function GameCard({
   )
 }
 
+// Define the Board component
+interface BoardProps {
+  position: [number, number, number];
+  label: string;
+  size: [number, number];
+  rotation?: [number, number, number]; // Optional rotation prop
+}
+
+function Board({ position, label, size, rotation = [0, 0, 0] }: BoardProps) {
+  return (
+    <group position={position} rotation={rotation}>
+      {/* Main Board with Custom Color */}
+      <mesh>
+        <planeGeometry args={size} />
+        <meshBasicMaterial color="#bbbcbb" /> {/* Updated color */}
+      </mesh>
+
+      {/* Label */}
+      <Html center transform>
+        <div className="whitespace-nowrap text-[10px] text-black">{label}</div>
+      </Html>
+    </group>
+  );
+}
+
 interface GameContentProps {
   onExit: () => void;
   isTestMode: boolean;
@@ -197,33 +232,30 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       <Grid size={10} />
 
       {/* Menu - bottom right, angled 45 degrees inward */}
-      <GameCard
-        frontTexture="/cards/cardback.png"
-        backTexture="/cards/cardback.png"
-        position={[3, 0, 3]} 
+      <Board 
+        position={[4.5, 0.3, 3.5]} 
         label="menu"
-        rotation={[Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
+        rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
         size={[3, 0.75]}
       />
 
       {/* Actions - bottom left, angled 45 degrees inward */}
-      <GameCard 
-        frontTexture="/cards/cardback.png"
-        backTexture="/cards/cardback.png"
-        position={[-3, 0, 3]} 
+      <Board
+        position={[-4.5, 0.3, 3.5]} 
         label="actions"
-        rotation={[Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
+        rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
         size={[3, 0.75]}
       />
 
-      {/* Deck - using standard size */}
-      <GameCard 
-        frontTexture="/cards/cardback.png"
-        backTexture="/cards/cardback.png"
-        position={[-3.4, 0, 0]} 
-        label="deck"
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
-      />
+      {/* Deck - 100 cards stacked with a y-offset of 0.05 */}
+      {Array.from({ length: 100 }).map((_, index) => (
+        <GameCard 
+          key={index}
+          position={[-3.4, 0.015 * index, 0]} // Start at y=0 and increment by 0.05 for each card
+          label=''
+          size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
+        />
+      ))}
 
       {/* Discard - using standard size */}
       <GameCard 
@@ -266,24 +298,21 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
         rotation={[Math.PI/2.2, 0, -0.2]}  
       />
 
-      {/* Player 1 Board - matching standard card height */}
-      <GameCard 
-        frontTexture="/cards/cardback.png"
-        backTexture="/cards/cardback.png"
-        position={[0, 0, 1.25]} 
+      {/* Player 1 Board */}
+      <Board 
+        position={[0, 0.05, 1.75]} 
         label="p1.board"
-        size={CARD_DIMENSIONS.getWidthFromHeight(3.25)} // 3.25 units wide, standard height
+        rotation={[-Math.PI/2, 0, 0]}
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
       />
 
-      {/* Player 1 Board - matching standard card height */}
-      <GameCard 
-        frontTexture="/cards/cardback.png"
-        backTexture="/cards/cardback.png"
-        position={[0, 0, -1.25]} 
-        label="p1.board"
-        size={CARD_DIMENSIONS.getWidthFromHeight(3.25)} // 3.25 units wide, standard height
+      {/* Player 2 Board */}
+      <Board 
+        position={[0, 0.05, -1.75]} 
+        label="p2.board"
+        rotation={[-Math.PI/2, 0, 0]}
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
       />
-
 
       {/* You can also add specific rotations when needed */}
       <GameCard
@@ -341,6 +370,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
           0, // Rotation around the Y axis (approximately 72 degrees)
           -Math.PI/1.05 // Rotation around the Z axis (no rotation)
         ]} // This will flip it 180 degrees around Y axis
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
       />
 
       {isTestMode && <CameraStatsBridgeInCanvas onCameraUpdate={onCameraUpdate} />}
