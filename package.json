@@ -10,6 +10,9 @@
     "node": ">=14"
   },
   "dependencies": {
+    "@abinnovision/eslint-config-base": "^2.2.0",
+    "@abinnovision/eslint-config-react": "^2.2.0",
+    "@abinnovision/eslint-config-typescript": "^2.2.0",
     "@cartridge/connector": "^0.5.0-alpha.3",
     "@cartridge/controller": "^0.5.0-alpha.3",
     "@dojoengine/core": "^1.0.0-alpha.28",
@@ -44,6 +47,8 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@types/three": "^0.169.0",
+    "@typescript-eslint/eslint-plugin": "^8.13.0",
+    "@typescript-eslint/parser": "^8.13.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.16",
     "eslint": "^8.56.0",
@@ -59,12 +64,13 @@
     "tailwindcss": "^3.4.0",
     "typescript": "^5.6.3",
     "url-loader": "^4.1.1",
-    "vite": "^4.5.5"
+    "vite": "^4.5.5",
+    "vite-plugin-eslint": "^1.8.1"
   },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint \"./src/**/*.{ts,tsx}\"",
     "preview": "vite preview",
     "codegen": "graphql-codegen"
   }

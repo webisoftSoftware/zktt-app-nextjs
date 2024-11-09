@@ -29,8 +29,8 @@ export function CardSprayManager({ isActive = false }: CardSprayManagerProps) {
 
       // Adjust scale to maintain proper card aspect ratio (752:1052)
       const baseScale = (Math.random() * 3.5 + 3.5) / 10
-      const scaleX = baseScale * 0.752 // Width
-      const scaleY = baseScale * 1.052 // Height
+      //const scaleX = baseScale * 0.752 // Width
+      //const scaleY = baseScale * 1.052 // Height
 
       // Random velocity
       const velocity: [number, number, number] = [

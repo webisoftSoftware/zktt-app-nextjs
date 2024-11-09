@@ -129,7 +129,7 @@ function GameCard({
         rotation-z={baseRotation[2] + rotation[2]}
       >
         <Html center transform>
-          <div className="text-black text-[10px] whitespace-nowrap">{label}</div>
+          <div className="whitespace-nowrap text-[10px] text-black">{label}</div>
         </Html>
         <mesh>
           <planeGeometry args={size} />
@@ -251,7 +251,7 @@ export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
   }, [isWalletConnected, onExit, isTestMode])
 
   return (
-    <div className="w-full h-full">
+    <div className="size-full">
       <Canvas
         gl={{ 
           toneMapping: THREE.NoToneMapping,

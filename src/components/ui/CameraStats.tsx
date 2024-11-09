@@ -9,7 +9,7 @@ interface CameraData {
 
 export function CameraStats({ cameraData }: { cameraData: CameraData }) {
   return (
-    <div className="absolute top-4 left-4 text-xs font-mono bg-black/50 text-white p-2 rounded">
+    <div className="absolute left-4 top-4 rounded bg-black/50 p-2 font-mono text-xs text-white">
       <div>
         pos: [{cameraData.position.x.toFixed(2)}, {cameraData.position.y.toFixed(2)}, {cameraData.position.z.toFixed(2)}]
       </div>

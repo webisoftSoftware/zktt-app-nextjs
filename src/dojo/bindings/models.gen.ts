@@ -422,7 +422,7 @@ export interface ComponentPlayer {
 	m_moves_remaining: number;
 	m_score: number;
 	m_has_drawn: boolean;
-	m_in_debt?: Number;
+	m_in_debt?: number;
 }
 
 // Type definition for `zktt::models::components::ComponentPlayerValue` struct
@@ -432,7 +432,7 @@ export interface ComponentPlayerValue {
 	m_moves_remaining: number;
 	m_score: number;
 	m_has_drawn: boolean;
-	m_in_debt?: Number;
+	m_in_debt?: number;
 }
 
 // Type definition for `zktt::models::enums::EnumBlockchainType` enum

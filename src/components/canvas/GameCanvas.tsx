@@ -39,11 +39,11 @@ export default function GameCanvas() {
 
   return (
     // Main container with centered content
-    <div className="flex min-h-screen justify-center items-center">
+    <div className="flex min-h-screen items-center justify-center">
       {/* Game viewport container */}
       <div 
         ref={containerRef}
-        className="relative rounded-2xl overflow-hidden"
+        className="relative overflow-hidden rounded-2xl"
         style={{
           width: '960px',  // Fixed width for consistent layout
           height: '540px',  // 16:9 aspect ratio
