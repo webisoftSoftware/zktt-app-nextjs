@@ -81,7 +81,7 @@ export function PlayAudio({ isVolumeOn }: PlayAudioProps) {
       playsInline
       preload="auto"
       muted
-      src="/audio/groovyloop.mp3"
+      src="/audio/theme.mp3"
     >
       Your browser does not support the audio element.
     </audio>

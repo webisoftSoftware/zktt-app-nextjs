@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { Html } from '@react-three/drei'
-import { PlayAudio } from '../audioplayer/play'
+import { PlayAudio } from './Play'
 
 export function Volume() {
   const [isVolumeOn, setIsVolumeOn] = useState(false)
