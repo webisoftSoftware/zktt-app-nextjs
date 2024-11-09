@@ -234,7 +234,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       {/* Menu - bottom right, angled 45 degrees inward */}
       <Board 
         position={[4.5, 0.3, 3.5]} 
-        label="menu"
+        label=""
         rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
         size={[3, 0.75]}
       />
@@ -242,7 +242,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       {/* Actions - bottom left, angled 45 degrees inward */}
       <Board
         position={[-4.5, 0.3, 3.5]} 
-        label="actions"
+        label=""
         rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
         size={[3, 0.75]}
       />
@@ -251,7 +251,9 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       {Array.from({ length: 100 }).map((_, index) => (
         <GameCard 
           key={index}
-          position={[-3.4, 0.015 * index, 0]} // Start at y=0 and increment by 0.05 for each card
+          frontTexture="/cards/cardback.png"
+          backTexture="/cards/cardback.png"
+          position={[-3.4, 0.0084 * index, 0]} // Start at y=0 and increment by 0.05 for each card
           label=''
           size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
         />
@@ -259,41 +261,45 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* Discard - using standard size */}
       <GameCard 
-        frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[3.4, 0, 0]} 
-        label="discard"
+        position={[3.4, 0.05, 0]} 
+        label=""
         size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
       />
 
       {/* Player 1 Hand x 5 */}
       <GameCard
         backTexture="/cards/cardback.png"
-        position={[-1, 0.42, 4]} 
+        position={[-1, 0.82, 4]} 
         label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         rotation={[Math.PI/2.2, 0, 0.2]}
       />
        <GameCard 
         backTexture="/cards/cardback.png"
-        position={[-0.5, 0.48, 4]} 
+        position={[-0.5, 0.88, 4]} 
         label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         rotation={[Math.PI/2.2, 0, 0.1]}  
       />
        <GameCard 
         backTexture="/cards/cardback.png"
-        position={[0, 0.5, 4]} 
+        position={[0, 0.9, 4]} 
         label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         rotation={[Math.PI/2.2, 0, 0]}  
       />
        <GameCard 
         backTexture="/cards/cardback.png"
-        position={[0.5, 0.48, 4]} 
+        position={[0.5, 0.88, 4]} 
         label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         rotation={[Math.PI/2.2, 0, -0.1]}  
       />
        <GameCard 
         backTexture="/cards/cardback.png"
-        position={[1.0, 0.42, 4]} 
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        position={[1.0, 0.82, 4]} 
         label=""
         rotation={[Math.PI/2.2, 0, -0.2]}  
       />
@@ -301,7 +307,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       {/* Player 1 Board */}
       <Board 
         position={[0, 0.05, 1.75]} 
-        label="p1.board"
+        label=""
         rotation={[-Math.PI/2, 0, 0]}
         size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
       />
@@ -309,17 +315,17 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       {/* Player 2 Board */}
       <Board 
         position={[0, 0.05, -1.75]} 
-        label="p2.board"
+        label=""
         rotation={[-Math.PI/2, 0, 0]}
         size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
       />
 
       {/* You can also add specific rotations when needed */}
       <GameCard
-      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[-1.0, 0.42, -4]} 
+        position={[-1.0, 0.82, -4]} 
         label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
           0, // Rotation around the Y axis (approximately 72 degrees)
@@ -328,9 +334,9 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       />
 
       <GameCard 
-      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[-0.5, 0.48, -4]} 
+        position={[-0.5, 0.88, -4]} 
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         label=""
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
@@ -339,9 +345,9 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
         ]} // This will flip it 180 degrees around Y axis
       />
       <GameCard
-      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[0, 0.5, -4]} 
+        position={[0, 0.9, -4]} 
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         label=""
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
@@ -350,10 +356,10 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
         ]} // This will flip it 180 degrees around Y axis
       />
       <GameCard
-      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[0.5, 0.48, -4]} 
+        position={[0.5, 0.88, -4]} 
         label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
             0, // Rotation around the Y axis (approximately 72 degrees)
@@ -361,9 +367,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
         ]} // This will flip it 180 degrees around Y axis
       />
       <GameCard
-      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[1.0, 0.42, -4]} 
+        position={[1.0, 0.82, -4]} 
         label=""
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
