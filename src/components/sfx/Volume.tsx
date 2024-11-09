@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Html } from '@react-three/drei'
+import { PlayAudio } from './Play'
 
 export function Volume() {
-  const [isVolumeOn, setIsVolumeOn] = useState(true)
+  const [isVolumeOn, setIsVolumeOn] = useState(false)
 
   return (
     <Html
@@ -23,6 +24,7 @@ export function Volume() {
           />
         </div>
       </div>
+      <PlayAudio isVolumeOn={isVolumeOn} />
     </Html>
   )
 } 
