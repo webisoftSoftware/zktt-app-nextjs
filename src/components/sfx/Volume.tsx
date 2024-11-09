@@ -1,8 +1,23 @@
 import { useAudio } from '../../context/AudioContext'
 import { PlayAudio } from './Play'
+import { useEffect } from 'react'
 
 export function Volume() {
   const { isVolumeOn, setIsVolumeOn } = useAudio()
+
+  const toggleVolume = () => setIsVolumeOn(!isVolumeOn)
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.code === 'Space' && event.target === document.body) {
+        event.preventDefault();
+        toggleVolume();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [toggleVolume]);
 
   return (
     <>
