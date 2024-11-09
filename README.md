@@ -1,4 +1,4 @@
-# zktt-app-nextjs
+# zktt-app-vite
 
 ## Front End Installation
 

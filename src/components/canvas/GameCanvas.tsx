@@ -1,14 +1,14 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
-import { GameSession } from '@/components/game/GameSession'
+import { GameSession } from '../game/GameSession'
 import { CardSprayManager } from '../vfx/CardSprayManager'
-import { Volume } from '@/components/sfx/Volume'
-import { useWallet } from '@/components/controller/WalletContext'
-import { useContractController } from '@/helpers/executeHelper'
+import { Volume } from '../sfx/Volume'
+import { useWallet } from '../controller/WalletContext'
+import { useContractController } from '../../helpers/executeHelper'
 
 export default function GameCanvas() {
   // Reference to the container div for sizing and positioning
@@ -23,6 +23,15 @@ export default function GameCanvas() {
   // Get wallet connection status from context
   const { isWalletConnected } = useWallet()
 
+  // TEMPORARY DEV HELPER - REMOVE BEFORE PRODUCTION
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsDashboardView(false)
+      setIsTestMode(true)
+    }, 1)
+    return () => clearTimeout(timer)
+  }, [])
+
   const handleViewChange = (isGameView: boolean, testMode: boolean = false) => {
     setIsTestMode(testMode)
     setIsDashboardView(!isGameView)
@@ -30,16 +39,16 @@ export default function GameCanvas() {
 
   return (
     // Main container with centered content
-    <div className="flex min-h-screen justify-center items-center">
+    <div className="flex min-h-screen items-center justify-center">
       {/* Game viewport container */}
       <div 
         ref={containerRef}
-        className="relative rounded-2xl overflow-hidden"
+        className="relative overflow-hidden rounded-2xl"
         style={{
           width: '960px',  // Fixed width for consistent layout
           height: '540px',  // 16:9 aspect ratio
-          background: 'rgba(255, 255, 255, 1)',
-          border: '5px solid white',
+          background: isDashboardView ? 'rgba(255, 255, 255, 1)' : (isTestMode ? '#ffffff' : '#ffffff'),
+          border: isDashboardView ? '5px solid white' : '5px solid rgba(255, 255, 255, 1)',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >

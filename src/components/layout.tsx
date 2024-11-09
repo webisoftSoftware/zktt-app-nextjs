@@ -1,7 +1,7 @@
-import { Layout } from '@/components/dom/Layout'
-import '@/global.css'
-import Header from '../src/components/ui/Header'
-import Footer from '../src/components/ui/Footer'
+import { Layout } from './dom/Layout'
+import './global.css'
+import Header from './ui/Header'
+import Footer from './ui/Footer'
 
 export const metadata = {
   title: 'zKTT Demo & MVP | SN HH BKK 2024',
@@ -12,8 +12,8 @@ export const metadata = {
 // This needs to be client-side only due to wallet interactions
 const ClientProviders = ({ children }: { children: React.ReactNode }) => {
   // Dynamic imports to ensure client-side only execution
-  const { StarknetProvider } = require('@/components/controller/StarknetProvider')
-  const { WalletProvider } = require('@/components/controller/WalletContext')
+  const { StarknetProvider } = require('../controller/StarknetProvider')
+  const { WalletProvider } = require('../controller/WalletContext')
 
   return (
     <StarknetProvider>

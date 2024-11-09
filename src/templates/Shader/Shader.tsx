@@ -17,7 +17,7 @@ const ShaderImpl = shaderMaterial(
 
 extend({ ShaderImpl })
 
-// eslint-disable-next-line react/display-name
+// eslint-disable-next-line
 const Shader = forwardRef(({ children, ...props }, ref) => {
   const localRef = useRef()
 

@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import Image from 'next/image'
+import { Link } from 'react-router-dom';
 
 // controller imports
 import { useEffect, useState } from "react"
@@ -36,7 +35,7 @@ export function ConnectWallet() {
 		<div>
 			{/* Wallet connection button */}
 			<button
-				className="text-black transition-colors w-full text-lg px-4 py-2 rounded-lg border-black font-normal lowercase"
+				className="w-full rounded-lg border-black px-4 py-2 text-base font-normal lowercase text-black transition-colors"
 				onClick={(e) => {
 					e.preventDefault();
 					address ? disconnect() : connect({ connector });
@@ -61,11 +60,11 @@ export function ConnectWallet() {
 
 export default function Header({ nav = true }: { nav?: boolean }) {
 	return (
-		<div className="absolute top-4 w-full px-8 flex justify-between items-center z-6">
+		<div className="absolute top-4 z-10 flex w-full items-center justify-between px-8">
 			{/* Logo and home link */}
 			<div className="flex items-center gap-4">
-				<Link href="/">
-					<Image 
+				<Link to="/">
+					<img
 						src="/img/zktt_square_transparent.png"
 						alt="ZKTT Logo"
 						width={42}
