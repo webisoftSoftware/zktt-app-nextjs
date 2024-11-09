@@ -12,7 +12,7 @@ export function PlayAudio({ isVolumeOn }: PlayAudioProps) {
   useEffect(() => {
     if (audioRef.current) {
       // Set initial properties
-      audioRef.current.volume = 0.5
+      audioRef.current.volume = 0.25
       audioRef.current.muted = true
       audioRef.current.loop = true
 
@@ -81,7 +81,7 @@ export function PlayAudio({ isVolumeOn }: PlayAudioProps) {
       playsInline
       preload="auto"
       muted
-      src="/audio/theme.mp3"
+      src="/audio/themeSong.mp3"
     >
       Your browser does not support the audio element.
     </audio>
