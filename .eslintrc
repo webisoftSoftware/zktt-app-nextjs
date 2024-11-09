@@ -4,5 +4,12 @@
     "import/prefer-default-export": "off",
     "no-var": "error",
     "no-html-link-for-pages": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "project": "./tsconfig.json"
+      }
+    }
   }
 }

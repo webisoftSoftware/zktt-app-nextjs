@@ -1,3 +1,5 @@
+'use client'
+
 import ControllerConnector from '@cartridge/connector/controller'
 import { mainnet, sepolia } from '@starknet-react/chains'
 import { StarknetConfig, starkscan } from '@starknet-react/core'

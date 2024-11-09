@@ -3,9 +3,14 @@
 @tailwind utilities;
 
 @layer base {
-  * {
+
+  /* Star style below for checking margin/padding etc */
+
+  /* * {
     box-sizing: border-box;
-  }
+    outline: 1px dotted blue;
+  } */
+   
 
   html,
   body,
@@ -20,8 +25,8 @@
   /* Add the gradient background */
   body {
     background: linear-gradient(-35deg, #f2f3f2, #dedede, #c9cac9, #a0a1a0);
-    background-size: 350% 350%;
-    animation: gradient 7s ease infinite;
+    background-size: 105% 105%;
+    animation: gradient 35s ease infinite;
     min-height: 100vh;
   }
 }
@@ -55,3 +60,4 @@
   font-style: italic;
   font-display: swap;
 }
+

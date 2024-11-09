@@ -1,12 +1,13 @@
+// Main page component - marked as client component for React hooks
 'use client'
 
-import dynamic from 'next/dynamic'
+// Import the game canvas which contains the main game interface
+import GameCanvas from '@/components/canvas/GameCanvas'
 
-const GameCanvas = dynamic(() => import('@/components/canvas/GameCanvas'), { ssr: false })
-
+// Simple page component that renders the game canvas
 export default function Page() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
+    <main>
       <GameCanvas />
     </main>
   )

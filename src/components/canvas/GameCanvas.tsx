@@ -1,21 +1,57 @@
-import { View } from '@/components/canvas/View'
-import { Common } from '@/components/canvas/View'
+'use client'
+
+import { useRef, useState } from 'react'
+import { Canvas } from '@react-three/fiber'
+import * as THREE from 'three'
+import { Dashboard } from './Dashboard'
+import { GameSession } from '@/components/game/GameSession'
+import { CardSprayManager } from '../vfx/CardSprayManager'
+import { Volume } from '@/components/sfx/Volume'
+import { useWallet } from '@/components/controller/WalletContext'
 
 export default function GameCanvas() {
+  // Reference to the container div for sizing and positioning
+  const containerRef = useRef<HTMLDivElement>(null)
+  
+  // State to toggle between dashboard and game views
+  const [isDashboardView, setIsDashboardView] = useState(true)
+  
+  // Get wallet connection status from context
+  const { isWalletConnected } = useWallet()
+
   return (
-    <div className="flex justify-center items-center w-full h-full p-8">
+    // Main container with centered content
+    <div className="flex min-h-screen justify-center items-center">
+      {/* Game viewport container */}
       <div 
-        className="relative w-[1280px] h-[720px] bg-white/10 rounded-2xl shadow-lg backdrop-blur-sm border-4 border-transparent animate-border bg-gradient p-[1px]"
+        ref={containerRef}
+        className="relative rounded-2xl overflow-hidden"
         style={{
-          maxWidth: '100%',
-          aspectRatio: '16/9',
+          width: '1280px',  // Fixed width for consistent layout
+          height: '720px',  // 16:9 aspect ratio
+          background: 'rgba(255, 255, 255, 1)',
+          border: '5px solid white',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <div className="absolute inset-0 rounded-2xl bg-black/20 backdrop-blur-sm" />
-        <View className="relative w-full h-full rounded-2xl overflow-hidden">
-          <Common color="transparent" />
-          {/* Your game components will go here */}
-        </View>
+        {/* Conditional rendering based on current view */}
+        {isDashboardView ? (
+          // Dashboard view with Three.js canvas
+          <Canvas
+            gl={{ toneMapping: THREE.NoToneMapping }}  // Disable tone mapping for consistent colors
+            camera={{ position: [0, 0, 6], fov: 40 }}  // Set up camera perspective
+          >
+            <Volume /> 
+            <CardSprayManager isActive={isDashboardView} />
+            <Dashboard 
+              isWalletConnected={isWalletConnected}
+              setGameView={setIsDashboardView}
+            />
+          </Canvas>
+        ) : (
+          // Game session view when dashboard is exited
+          <GameSession onExit={() => setIsDashboardView(true)} />
+        )}
       </div>
     </div>
   )
