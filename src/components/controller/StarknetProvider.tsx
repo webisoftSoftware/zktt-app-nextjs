@@ -8,9 +8,10 @@ import { RpcProvider } from 'starknet'
 import type { Chain } from '@starknet-react/chains'
 import type { PropsWithChildren } from 'react'
 
+const ACTIONS_ADDRESS='0x0325ecc3d1a06d3868685a82290148d2cce41221e2fe87d71a6451fec77b3d3c';
+const GAME_ADDRESS='0x076f8d509dac11e7db93304f89b3c13fecef38b92c9b77f46f610e67051aebc5';
+const PLAYER_ADDRESS='0x0533bb2f5c1d6fcb65adc8960b9a0f80a8b2d6c3020bbb9691710e7ab69a0e6d';
 
-// hard coded contract address temporary
-const ACTIONS_ADDRESS='0x009c4382dc6a6e9813dfe097dc5f8bedabaa94ba19c1ea073c9d903f224a9784';
 export function StarknetProvider({ children }: PropsWithChildren) {
   return (
     <StarknetConfig 
@@ -25,16 +26,7 @@ export function StarknetProvider({ children }: PropsWithChildren) {
 }
 const cartridge = new ControllerConnector({
   policies: [
-    {
-      target: ACTIONS_ADDRESS,
-      method: 'join',
-      description: 'Join a new table game.',
-    },
-    {
-      target: ACTIONS_ADDRESS,
-      method: 'start',
-      description: 'Start a game once everyone has joined.',
-    },
+    // ACTIONS_ADDRESS policies
     {
       target: ACTIONS_ADDRESS,
       method: 'draw',
@@ -55,13 +47,25 @@ const cartridge = new ControllerConnector({
       method: 'pay_fee',
       description: 'Pay a gas fee to recipient.',
     },
+    // GAME_ADDRESS policies
     {
-      target: ACTIONS_ADDRESS,
+      target: GAME_ADDRESS,
+      method: 'start',
+      description: 'Start a game once everyone has joined.',
+    },
+    {
+      target: GAME_ADDRESS,
       method: 'end_turn',
       description: 'End the current players turn.',
     },
+    // PLAYER_ADDRESS policies
     {
-      target: ACTIONS_ADDRESS,
+      target: PLAYER_ADDRESS,
+      method: 'join',
+      description: 'Join a new table game.',
+    },
+    {
+      target: PLAYER_ADDRESS,
       method: 'leave',
       description: 'Leave the current table game.',
     },
