@@ -8,6 +8,7 @@ import { GameSession } from '@/components/game/GameSession'
 import { CardSprayManager } from '../vfx/CardSprayManager'
 import { Volume } from '@/components/sfx/Volume'
 import { useWallet } from '@/components/controller/WalletContext'
+import { useContractController } from '@/helpers/executeHelper'
 
 export default function GameCanvas() {
   // Reference to the container div for sizing and positioning
@@ -34,6 +35,7 @@ export default function GameCanvas() {
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
+
         {/* Conditional rendering based on current view */}
         {isDashboardView ? (
           // Dashboard view with Three.js canvas

@@ -4,6 +4,8 @@ import { Group, TextureLoader } from 'three'
 import { useLoader } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import { Button } from '@/components/ui/Button'
+import { useContractController } from '@/helpers/executeHelper'
+import { StarknetProvider } from "@/components/controller/StarknetProvider"
 
 // Define props interface for component type safety
 interface DashboardProps {
@@ -36,6 +38,47 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
   // Constants for logo layer effect
   const LAYERS = 35  // Number of logo layers for depth effect
   const LAYER_SPACING = 0.007  // Space between each layer
+
+  // Add contract controller
+  const { executeTransaction, submitted } = useContractController()
+
+  // Separate submission states for each action
+  const [isEntering, setIsEntering] = useState(false)
+  const [isLeaving, setIsLeaving] = useState(false)
+
+  // Updated enter transaction handler
+  const handleEnterGame = async () => {
+    try {
+      setIsEntering(true)
+      await executeTransaction([{
+        contractAddress: "0x0533bb2f5c1d6fcb65adc8960b9a0f80a8b2d6c3020bbb9691710e7ab69a0e6d",
+        entrypoint: "join",
+        calldata: [0,7758188,3]
+      }])
+      setGameView(true)
+    } catch (error) {
+      console.error("Failed to enter game:", error)
+    } finally {
+      setIsEntering(false)
+    }
+  }
+
+  // Updated leave transaction handler
+  const handleLeaveGame = async () => {
+    try {
+      setIsLeaving(true)
+      await executeTransaction([{
+        contractAddress: "0x0533bb2f5c1d6fcb65adc8960b9a0f80a8b2d6c3020bbb9691710e7ab69a0e6d",
+        entrypoint: "leave",
+        calldata: []
+      }])
+      setGameView(false)
+    } catch (error) {
+      console.error("Failed to leave game:", error)
+    } finally {
+      setIsLeaving(false)
+    }
+  }
 
   return (
     <>
@@ -90,20 +133,22 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
               visibility: isVisible ? 'visible' : 'hidden'
             }}
           >
-            {/* Enter game button */}
-            <Button 
-              className="px-14 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
-              onClick={() => setGameView(true)}
-            >
-              ENTER
-            </Button>
-    
-            {/* Settings button - currently logs to console */}
+            {/* Enter game button - updated with separate loading state */}
             <Button 
               className="px-10 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
-              onClick={() => console.log('Settings clicked')}
+              onClick={handleEnterGame}
+              disabled={isEntering}
             >
-              SETTINGS
+              {isEntering ? 'JOINING...' : 'ENTER'}
+            </Button>
+    
+            {/* Leave game button - updated with separate loading state */}
+            <Button 
+              className="px-10 py-4 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-xl transition-all"
+              onClick={handleLeaveGame}
+              disabled={isLeaving}
+            >
+              {isLeaving ? 'LEAVING...' : 'LEAVE'}
             </Button>
           </div>
         </Html>

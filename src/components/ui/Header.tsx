@@ -15,7 +15,8 @@ export function ConnectWallet() {
 	const { disconnect } = useDisconnect();
 	const { address } = useAccount();
 
-	const connector = connectors[0] as unknown as ControllerConnector;
+	// const connector = connectors[0] as ControllerConnector;
+	const connector = connectors[0] as ControllerConnector;
 
 	// State for storing username
 	const [username, setUsername] = useState<string>();

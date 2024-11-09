@@ -4,11 +4,13 @@
 // Import the game canvas which contains the main game interface
 import GameCanvas from '@/components/canvas/GameCanvas'
 
-// Simple page component that renders the game canvas
-export default function Page() {
+const Page = () => {
+
   return (
-    <main>
+    <main className="relative">
       <GameCanvas />
     </main>
   )
 }
+
+export default Page
