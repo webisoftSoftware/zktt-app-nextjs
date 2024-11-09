@@ -8,6 +8,7 @@ import { GameSession } from '@/components/game/GameSession'
 import { CardSprayManager } from '../vfx/CardSprayManager'
 import { Volume } from '@/components/sfx/Volume'
 import { useWallet } from '@/components/controller/WalletContext'
+import { useContractController } from '@/helpers/executeHelper'
 
 export default function GameCanvas() {
   // Reference to the container div for sizing and positioning
@@ -16,8 +17,16 @@ export default function GameCanvas() {
   // State to toggle between dashboard and game views
   const [isDashboardView, setIsDashboardView] = useState(true)
   
+  // State to toggle between test mode and normal mode
+  const [isTestMode, setIsTestMode] = useState(false)
+  
   // Get wallet connection status from context
   const { isWalletConnected } = useWallet()
+
+  const handleViewChange = (isGameView: boolean, testMode: boolean = false) => {
+    setIsTestMode(testMode)
+    setIsDashboardView(!isGameView)
+  }
 
   return (
     // Main container with centered content
@@ -34,6 +43,7 @@ export default function GameCanvas() {
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
+
         {/* Conditional rendering based on current view */}
         {isDashboardView ? (
           // Dashboard view with Three.js canvas
@@ -45,12 +55,15 @@ export default function GameCanvas() {
             <CardSprayManager isActive={isDashboardView} />
             <Dashboard 
               isWalletConnected={isWalletConnected}
-              setGameView={setIsDashboardView}
+              setGameView={handleViewChange}
             />
           </Canvas>
         ) : (
           // Game session view when dashboard is exited
-          <GameSession onExit={() => setIsDashboardView(true)} />
+          <GameSession 
+            onExit={() => handleViewChange(false)} 
+            isTestMode={isTestMode}
+          />
         )}
       </div>
     </div>
