@@ -9,6 +9,7 @@ import { CardSprayManager } from '../vfx/CardSprayManager'
 import { Volume } from '../sfx/Volume'
 import { useWallet } from '../controller/WalletContext'
 import { useContractController } from '../../helpers/executeHelper'
+import ShaderBackground from './ShaderBackground'
 
 export default function GameCanvas() {
   // Reference to the container div for sizing and positioning
@@ -26,8 +27,8 @@ export default function GameCanvas() {
   // TEMPORARY DEV HELPER - REMOVE BEFORE PRODUCTION
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsDashboardView(false)
-      setIsTestMode(true)
+      setIsDashboardView(true)
+      setIsTestMode(false)
     }, 1)
     return () => clearTimeout(timer)
   }, [])
@@ -47,11 +48,12 @@ export default function GameCanvas() {
         style={{
           width: '960px',  // Fixed width for consistent layout
           height: '540px',  // 16:9 aspect ratio
-          background: isDashboardView ? 'rgba(255, 255, 255, 1)' : (isTestMode ? '#ffffff' : '#ffffff'),
+          //background: isDashboardView ? 'rgba(255, 255, 255, 1)' : (isTestMode ? '#ffffff' : '#ffffff'),
           border: isDashboardView ? '5px solid white' : '5px solid rgba(255, 255, 255, 1)',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
+        {isDashboardView && <ShaderBackground />}
         {/* Add Volume control outside of conditional rendering */}
         <div className="absolute right-4 top-4 z-50">
           <Volume />
@@ -64,7 +66,8 @@ export default function GameCanvas() {
             gl={{ toneMapping: THREE.NoToneMapping }}  // Disable tone mapping for consistent colors
             camera={{ position: [0, 0, 6], fov: 40 }}  // Set up camera perspective
           >
-            <CardSprayManager isActive={isDashboardView} />
+            <Volume /> 
+            {/*<CardSprayManager isActive={isDashboardView} />*/}
             <Dashboard 
               isWalletConnected={isWalletConnected}
               setGameView={handleViewChange}
