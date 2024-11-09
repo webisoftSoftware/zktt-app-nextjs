@@ -22,7 +22,8 @@ interface PlaneProps {
 }
 
 interface GameCardProps {
-  path?: string;
+  frontTexture?: string;
+  backTexture?: string;
   position: [number, number, number];
   label: string;
   rotation?: [number, number, number];
@@ -111,7 +112,8 @@ const CARD_DIMENSIONS = {
 }
 
 function GameCard({
-  path,
+  frontTexture,
+  backTexture = '/cards/cardback.png',
   position, 
   label, 
   rotation = [0, 0, 0], 
@@ -125,12 +127,14 @@ function GameCard({
     config: { mass: 1, tension: 180, friction: 12 }
   });
 
-  const texture = useMemo(() => {
-    const texturePath = path ?? getNextRandomCard();
-    return useLoader(TextureLoader, texturePath, undefined, (error) => {
-      console.error('Error loading texture:', error);
-    });
-  }, [path]);
+  const frontTextureMap = useMemo(() => {
+    const texturePath = frontTexture ?? getNextRandomCard();
+    return useLoader(TextureLoader, texturePath);
+  }, [frontTexture]);
+
+  const backTextureMap = useMemo(() => {
+    return useLoader(TextureLoader, backTexture);
+  }, [backTexture]);
 
   return (
     <group position={position}>
@@ -142,12 +146,22 @@ function GameCard({
         <Html center transform>
           <div className="whitespace-nowrap text-[10px] text-black">{label}</div>
         </Html>
+        {/* Front face */}
         <mesh>
           <planeGeometry args={size} />
           <meshBasicMaterial 
-            map={texture}
+            map={frontTextureMap}
             transparent={true}
-            side={THREE.DoubleSide}
+            side={THREE.FrontSide}
+          />
+        </mesh>
+        {/* Back face */}
+        <mesh>
+          <planeGeometry args={size} />
+          <meshBasicMaterial 
+            map={backTextureMap}
+            transparent={true}
+            side={THREE.BackSide}
           />
         </mesh>
       </animated.group>
@@ -184,7 +198,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* Menu - bottom right, angled 45 degrees inward */}
       <GameCard
-        path="/cards/cardback.png"
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[3, 0, 3]} 
         label="menu"
         rotation={[Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
@@ -193,7 +208,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* Actions - bottom left, angled 45 degrees inward */}
       <GameCard 
-        path="/cards/cardback.png"
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[-3, 0, 3]} 
         label="actions"
         rotation={[Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
@@ -202,7 +218,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* Deck - using standard size */}
       <GameCard 
-        path="/cards/cardback.png"
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[-3.4, 0, 0]} 
         label="deck"
         size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
@@ -210,7 +227,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* Discard - using standard size */}
       <GameCard 
-        path="/cards/cardback.png"
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[3.4, 0, 0]} 
         label="discard"
         size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
@@ -218,26 +236,31 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* Player 1 Hand x 5 */}
       <GameCard
+        backTexture="/cards/cardback.png"
         position={[-1, 0.42, 4]} 
         label=""
         rotation={[Math.PI/2.2, 0, 0.2]}
       />
        <GameCard 
+        backTexture="/cards/cardback.png"
         position={[-0.5, 0.48, 4]} 
         label=""
         rotation={[Math.PI/2.2, 0, 0.1]}  
       />
        <GameCard 
+        backTexture="/cards/cardback.png"
         position={[0, 0.5, 4]} 
         label=""
         rotation={[Math.PI/2.2, 0, 0]}  
       />
        <GameCard 
+        backTexture="/cards/cardback.png"
         position={[0.5, 0.48, 4]} 
         label=""
         rotation={[Math.PI/2.2, 0, -0.1]}  
       />
        <GameCard 
+        backTexture="/cards/cardback.png"
         position={[1.0, 0.42, 4]} 
         label=""
         rotation={[Math.PI/2.2, 0, -0.2]}  
@@ -245,7 +268,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* Player 1 Board - matching standard card height */}
       <GameCard 
-        path="/cards/cardback.png"
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[0, 0, 1.25]} 
         label="p1.board"
         size={CARD_DIMENSIONS.getWidthFromHeight(3.25)} // 3.25 units wide, standard height
@@ -253,7 +277,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* Player 1 Board - matching standard card height */}
       <GameCard 
-        path="/cards/cardback.png"
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[0, 0, -1.25]} 
         label="p1.board"
         size={CARD_DIMENSIONS.getWidthFromHeight(3.25)} // 3.25 units wide, standard height
@@ -262,6 +287,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* You can also add specific rotations when needed */}
       <GameCard
+      frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[-1.0, 0.42, -4]} 
         label=""
         rotation={[
@@ -272,6 +299,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       />
 
       <GameCard 
+      frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[-0.5, 0.48, -4]} 
         label=""
         rotation={[
@@ -281,6 +310,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
         ]} // This will flip it 180 degrees around Y axis
       />
       <GameCard
+      frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[0, 0.5, -4]} 
         label=""
         rotation={[
@@ -290,15 +321,19 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
         ]} // This will flip it 180 degrees around Y axis
       />
       <GameCard
+      frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[0.5, 0.48, -4]} 
         label=""
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
-          0, // Rotation around the Y axis (approximately 72 degrees)
+            0, // Rotation around the Y axis (approximately 72 degrees)
           -Math.PI/1.025 // Rotation around the Z axis (no rotation)
         ]} // This will flip it 180 degrees around Y axis
       />
       <GameCard
+      frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
         position={[1.0, 0.42, -4]} 
         label=""
         rotation={[
