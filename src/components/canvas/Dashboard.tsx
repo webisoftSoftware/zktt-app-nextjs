@@ -176,7 +176,6 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
           <div 
             className="flex justify-center gap-7"
             style={{ 
-              pointerEvents: isVisible ? 'all' : 'none',  // Changed from 'auto' to 'all'
               position: 'relative',
               zIndex: 1,
               opacity: isVisible ? 1 : 1,  // Fixed opacity values
@@ -187,16 +186,24 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
             {/* Join game button - updated with separate loading state */}
             <Button 
               className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
-              onClick={handleJoinGame}
+              onClick={() => {
+                if (isWalletConnected) {
+                  handleJoinGame()
+                }
+              }}
               disabled={isJoining}
             >
               {isJoining ? 'WAITING...' : 'READY'}
             </Button>
 
-            {/* Update button text and handlers */}
+            {/* Start game button */}
             <Button 
               className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
-              onClick={handleStartGame}
+              onClick={() => {
+                if (isWalletConnected) {
+                  handleStartGame()
+                }
+              }}
               disabled={isStarting}
             >
               {isStarting ? 'STARTING...' : 'START'}
