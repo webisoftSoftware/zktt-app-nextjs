@@ -27,7 +27,7 @@ export default function GameCanvas() {
   // TEMPORARY DEV HELPER - REMOVE BEFORE PRODUCTION
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsDashboardView(true)
+      setIsDashboardView(false)
       setIsTestMode(false)
     }, 1)
     return () => clearTimeout(timer)
@@ -53,12 +53,10 @@ export default function GameCanvas() {
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
-        {isDashboardView && <ShaderBackground />}
-        {/* Add Volume control outside of conditional rendering */}
         <div className="absolute right-4 top-4 z-50">
           <Volume />
         </div>
-
+        {isDashboardView && <ShaderBackground />}
         {/* Conditional rendering based on current view */}
         {isDashboardView ? (
           // Dashboard view with Three.js canvas
@@ -66,7 +64,6 @@ export default function GameCanvas() {
             gl={{ toneMapping: THREE.NoToneMapping }}  // Disable tone mapping for consistent colors
             camera={{ position: [0, 0, 6], fov: 40 }}  // Set up camera perspective
           >
-            <Volume /> 
             {/*<CardSprayManager isActive={isDashboardView} />*/}
             <Dashboard 
               isWalletConnected={isWalletConnected}

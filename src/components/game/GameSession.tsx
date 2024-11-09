@@ -1,11 +1,12 @@
-import { useEffect, useState, useCallback } from 'react'
-import { Canvas, useThree } from '@react-three/fiber'
+import { useEffect, useState, useCallback, useMemo } from 'react'
+import { Canvas, useThree, useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWallet } from '../controller/WalletContext'
-import { Html } from '@react-three/drei'
+import { Html, Texture } from '@react-three/drei'
 import { OrbitControls } from '@react-three/drei'
 import { useSpring, animated } from '@react-spring/three'
 import { CameraStats, CameraStatsBridgeInCanvas } from '@/components/ui/CameraStats'
+import { TextureLoader } from 'three'
 
 interface GameSessionProps {
   onExit: () => void;
@@ -14,12 +15,15 @@ interface GameSessionProps {
 
 // New component for game content
 import { Plane, Text } from "@react-three/drei"
+import { cardImages } from '../vfx/CardSprite'
 
 interface PlaneProps {
   size: number;
 }
 
 interface GameCardProps {
+  frontTexture?: string;
+  backTexture?: string;
   position: [number, number, number];
   label: string;
   rotation?: [number, number, number];
@@ -117,11 +121,13 @@ const CARD_DIMENSIONS = {
   }
 }
 
-function GameCard({ 
+function GameCard({
+  frontTexture,
+  backTexture = '/cards/cardback.png',
   position, 
   label, 
   rotation = [0, 0, 0], 
-  size = CARD_DIMENSIONS.getScaledDimensions(0.75), // Default width of 0.75 units
+  size = CARD_DIMENSIONS.getScaledDimensions(0.75),
   isFaceUp = true 
 }: GameCardProps) {
   const baseRotation = [-Math.PI/2, 0, 0] as [number, number, number];
@@ -131,19 +137,42 @@ function GameCard({
     config: { mass: 1, tension: 180, friction: 12 }
   });
 
+  const frontTextureMap = useMemo(() => {
+    const texturePath = frontTexture ?? getNextRandomCard();
+    return useLoader(TextureLoader, texturePath);
+  }, [frontTexture]);
+
+  const backTextureMap = useMemo(() => {
+    return useLoader(TextureLoader, backTexture);
+  }, [backTexture]);
+
   return (
     <group position={position}>
       <animated.group
         rotation-x={baseRotation[0] + rotation[0]}
-        rotation-y={flipRotation}
+        rotation-y={baseRotation[1] + rotation[1]}
         rotation-z={baseRotation[2] + rotation[2]}
       >
         <Html center transform>
           <div className="whitespace-nowrap text-[10px] text-black">{label}</div>
         </Html>
+        {/* Front face */}
         <mesh>
           <planeGeometry args={size} />
-          <meshBasicMaterial color="#000000"/>
+          <meshBasicMaterial 
+            map={frontTextureMap}
+            transparent={true}
+            side={THREE.FrontSide}
+          />
+        </mesh>
+        {/* Back face */}
+        <mesh>
+          <planeGeometry args={size} />
+          <meshBasicMaterial 
+            map={backTextureMap}
+            transparent={true}
+            side={THREE.BackSide}
+          />
         </mesh>
       </animated.group>
     </group>
@@ -181,8 +210,12 @@ interface GameContentProps {
   onCameraUpdate: (position: any, rotation: any) => void;
 }
 
+const getRandomCardIndex = (): number => {
+  return Math.floor(Math.random() * cardImages.length);  // Returns 0, 1, 2, 3, or 4
+}
+
 function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
-  const { viewport } = useThree()
+  const { viewport } = useThree();
 
   return (
     <>
@@ -201,7 +234,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       {/* Menu - bottom right, angled 45 degrees inward */}
       <Board 
         position={[4.5, 0.3, 3.5]} 
-        label="menu"
+        label=""
         rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
         size={[3, 0.75]}
       />
@@ -209,7 +242,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       {/* Actions - bottom left, angled 45 degrees inward */}
       <Board
         position={[-4.5, 0.3, 3.5]} 
-        label="actions"
+        label=""
         rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
         size={[3, 0.75]}
       />
@@ -218,7 +251,9 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       {Array.from({ length: 100 }).map((_, index) => (
         <GameCard 
           key={index}
-          position={[-3.4, 0.015 * index, 0]} // Start at y=0 and increment by 0.05 for each card
+          frontTexture="/cards/cardback.png"
+          backTexture="/cards/cardback.png"
+          position={[-3.4, 0.0084 * index, 0]} // Start at y=0 and increment by 0.05 for each card
           label=''
           size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
         />
@@ -226,23 +261,53 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
 
       {/* Discard - using standard size */}
       <GameCard 
+        backTexture="/cards/cardback.png"
         position={[3.4, 0.05, 0]} 
-        label="discard"
+        label=""
         size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
       />
 
       {/* Player 1 Hand x 5 */}
-      <GameCard 
-        position={[0, 0.75, 4]} 
-        label="p1.hand"
-        rotation={[Math.PI/2.5, 0, 0]}
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} // Custom width and height
+      <GameCard
+        backTexture="/cards/cardback.png"
+        position={[-1, 0.82, 4]} 
+        label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        rotation={[Math.PI/2.2, 0, 0.2]}
+      />
+       <GameCard 
+        backTexture="/cards/cardback.png"
+        position={[-0.5, 0.88, 4]} 
+        label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        rotation={[Math.PI/2.2, 0, 0.1]}  
+      />
+       <GameCard 
+        backTexture="/cards/cardback.png"
+        position={[0, 0.9, 4]} 
+        label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        rotation={[Math.PI/2.2, 0, 0]}  
+      />
+       <GameCard 
+        backTexture="/cards/cardback.png"
+        position={[0.5, 0.88, 4]} 
+        label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        rotation={[Math.PI/2.2, 0, -0.1]}  
+      />
+       <GameCard 
+        backTexture="/cards/cardback.png"
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        position={[1.0, 0.82, 4]} 
+        label=""
+        rotation={[Math.PI/2.2, 0, -0.2]}  
       />
 
       {/* Player 1 Board */}
       <Board 
         position={[0, 0.05, 1.75]} 
-        label="p1.board"
+        label=""
         rotation={[-Math.PI/2, 0, 0]}
         size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
       />
@@ -250,19 +315,65 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       {/* Player 2 Board */}
       <Board 
         position={[0, 0.05, -1.75]} 
-        label="p2.board"
+        label=""
         rotation={[-Math.PI/2, 0, 0]}
         size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
       />
 
       {/* You can also add specific rotations when needed */}
-      <GameCard 
-        position={[0.05, 0.75, -4]} 
-        label="p2.hand"
+      <GameCard
+        backTexture="/cards/cardback.png"
+        position={[-1.0, 0.82, -4]} 
+        label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         rotation={[
-          -1.25, // Rotation around the X axis (no rotation)
+          -Math.PI/2.2, // Rotation around the X axis (no rotation)
           0, // Rotation around the Y axis (approximately 72 degrees)
-          0 // Rotation around the Z axis (no rotation)
+          Math.PI/1.05 // Rotation around the Z axis (no rotation)
+        ]} // This will flip it 180 degrees around Y axis
+      />
+
+      <GameCard 
+        backTexture="/cards/cardback.png"
+        position={[-0.5, 0.88, -4]} 
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        label=""
+        rotation={[
+          -Math.PI/2.2, // Rotation around the X axis (no rotation)
+          0, // Rotation around the Y axis (approximately 72 degrees)
+          Math.PI/1.025 // Rotation around the Z axis (no rotation)
+        ]} // This will flip it 180 degrees around Y axis
+      />
+      <GameCard
+        backTexture="/cards/cardback.png"
+        position={[0, 0.9, -4]} 
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        label=""
+        rotation={[
+          -Math.PI/2.2, // Rotation around the X axis (no rotation)
+          0, // Rotation around the Y axis (approximately 72 degrees)
+          Math.PI/1.0 // Rotation around the Z axis (no rotation)
+        ]} // This will flip it 180 degrees around Y axis
+      />
+      <GameCard
+        backTexture="/cards/cardback.png"
+        position={[0.5, 0.88, -4]} 
+        label=""
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        rotation={[
+          -Math.PI/2.2, // Rotation around the X axis (no rotation)
+            0, // Rotation around the Y axis (approximately 72 degrees)
+          -Math.PI/1.025 // Rotation around the Z axis (no rotation)
+        ]} // This will flip it 180 degrees around Y axis
+      />
+      <GameCard
+        backTexture="/cards/cardback.png"
+        position={[1.0, 0.82, -4]} 
+        label=""
+        rotation={[
+          -Math.PI/2.2, // Rotation around the X axis (no rotation)
+          0, // Rotation around the Y axis (approximately 72 degrees)
+          -Math.PI/1.05 // Rotation around the Z axis (no rotation)
         ]} // This will flip it 180 degrees around Y axis
         size={CARD_DIMENSIONS.getScaledDimensions(1)} 
       />
@@ -315,4 +426,25 @@ export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
       {isTestMode && <CameraStats cameraData={cameraData} />}
     </div>
   )
+}
+
+// Fisher-Yates shuffle algorithm
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Create a randomized version of cardImages that we'll export
+export const randomizedCardImages = shuffleArray(cardImages);
+
+// Helper function to get next card (cycles through the randomized array)
+let currentCardIndex = 0;
+export const getNextRandomCard = (): string => {
+  const card = randomizedCardImages[currentCardIndex];
+  currentCardIndex = (currentCardIndex + 1) % randomizedCardImages.length;
+  return card;
 }

@@ -22,7 +22,7 @@ export function ClickSound() {
     <audio 
       ref={audioRef}
       preload="auto"
-      src="/audio/crazyClick.mp3" // Make sure to add your click sound file
+      src="/audio/pitchClick.mp3" // Make sure to add your click sound file
       style={{ display: 'none' }}
     >
       Your browser does not support the audio element.
