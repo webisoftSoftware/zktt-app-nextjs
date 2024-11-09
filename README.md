@@ -32,6 +32,13 @@ yarn start
 ngrok http 3000
 `
 
+## canvas size 16:9
+
+```
+width: '960px' 
+height: '540px'    
+```
+
 ## Available Scripts
 
 - `yarn dev` - Start development server with turbo
