@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useAudio } from '../../context/AudioContext'
 import { PlayAudio } from './Play'
 
 export function Volume() {
-  const [isVolumeOn, setIsVolumeOn] = useState(false)
+  const { isVolumeOn, setIsVolumeOn } = useAudio()
 
   return (
     <>
