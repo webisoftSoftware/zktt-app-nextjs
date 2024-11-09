@@ -9,7 +9,7 @@ interface CardSpriteProps {
   velocity: [number, number, number]
 }
 
-const cardImages = [
+export const cardImages = [
   // ETH cards
   '/cards/asset_1eth.png',
   '/cards/asset_2eth.png',
