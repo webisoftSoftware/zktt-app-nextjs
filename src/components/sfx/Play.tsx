@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
+import { useAudio } from '../../context/AudioContext'
 
 interface PlayAudioProps {
   isVolumeOn: boolean;
