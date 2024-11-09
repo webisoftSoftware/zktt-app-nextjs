@@ -1,15 +1,11 @@
-import { useState } from 'react'
-import { Html } from '@react-three/drei'
+import { useAudio } from '../../context/AudioContext'
 import { PlayAudio } from './Play'
 
 export function Volume() {
-  const [isVolumeOn, setIsVolumeOn] = useState(false)
+  const { isVolumeOn, setIsVolumeOn } = useAudio()
 
   return (
-    <Html
-      transform={false}
-      className="pointer-events-auto fixed right-[-465] top-[-255]"
-    >
+    <>
       <div className="cursor-pointer">
         <div 
           onClick={() => setIsVolumeOn(!isVolumeOn)}
@@ -25,6 +21,6 @@ export function Volume() {
         </div>
       </div>
       <PlayAudio isVolumeOn={isVolumeOn} />
-    </Html>
+    </>
   )
 } 

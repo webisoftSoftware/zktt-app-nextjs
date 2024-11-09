@@ -54,6 +54,10 @@ export default function GameCanvas() {
         }}
       >
         {isDashboardView && <ShaderBackground />}
+        {/* Add Volume control outside of conditional rendering */}
+        <div className="absolute right-4 top-4 z-50">
+          <Volume />
+        </div>
 
         {/* Conditional rendering based on current view */}
         {isDashboardView ? (

@@ -1,4 +1,4 @@
-{
+  {
   "name": "react-three-vite",
   "version": "2.0.0",
   "authors": [
@@ -70,8 +70,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "start": "vite start",
     "lint": "eslint \"./src/**/*.{ts,tsx}\"",
-    "preview": "vite preview",
     "codegen": "graphql-codegen"
   }
 }
