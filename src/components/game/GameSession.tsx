@@ -462,7 +462,8 @@ export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
           antialias: true
         }}
         camera={{ 
-          position: [0, 5, 10],
+          position: [0.00, 3.18, 11.33],
+          rotation: [-15.70 * (Math.PI / 180), 0.00, 0.00],
           fov: 45,
           near: 0.1,
           far: 700
