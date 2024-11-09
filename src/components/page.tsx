@@ -2,7 +2,7 @@
 'use client'
 
 // Import the game canvas which contains the main game interface
-import GameCanvas from '@/components/canvas/GameCanvas'
+import GameCanvas from './canvas/GameCanvas'
 
 const Page = () => {
 

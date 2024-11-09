@@ -1,6 +1,6 @@
 'use client';
 
-import { r3f } from '@/helpers/global';
+import { r3f } from './global';
 
 type ThreeProps = {
   children: React.ReactNode;

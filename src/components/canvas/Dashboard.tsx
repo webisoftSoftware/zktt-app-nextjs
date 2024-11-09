@@ -3,13 +3,13 @@ import { useFrame } from '@react-three/fiber'
 import { Group, TextureLoader } from 'three'
 import { useLoader } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
-import { Button } from '@/components/ui/Button'
-import { useContractController } from '@/helpers/executeHelper'
-import { StarknetProvider } from "@/components/controller/StarknetProvider"
+import { Button } from '../ui/Button'
+import { useContractController } from '../../helpers/executeHelper'
+import { StarknetProvider } from "../controller/StarknetProvider"
 import { useConnect } from "@starknet-react/core"
 import ControllerConnector from '@cartridge/connector/controller'
 import { shortString } from 'starknet'
-
+import DojoInit from '../../dojo/sdk_setup'
 // Define props interface for component type safety
 interface DashboardProps {
   isWalletConnected: boolean
@@ -21,6 +21,9 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
   // Load the ZKTT logo texture for 3D rendering
   const texture = useLoader(TextureLoader, '/img/zktt_square_transparent.png')
   
+  const dojo = DojoInit().then((dojo) => {
+    console.log(dojo)
+  })
   // Reference to the rotating logo group
   const logoGroupRef = useRef<Group>(null)
   
@@ -173,7 +176,6 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
           <div 
             className="flex justify-center gap-7"
             style={{ 
-              pointerEvents: isVisible ? 'all' : 'none',  // Changed from 'auto' to 'all'
               position: 'relative',
               zIndex: 1,
               opacity: isVisible ? 1 : 1,  // Fixed opacity values
@@ -184,16 +186,24 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
             {/* Join game button - updated with separate loading state */}
             <Button 
               className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
-              onClick={handleJoinGame}
+              onClick={() => {
+                if (isWalletConnected) {
+                  handleJoinGame()
+                }
+              }}
               disabled={isJoining}
             >
               {isJoining ? 'WAITING...' : 'READY'}
             </Button>
 
-            {/* Update button text and handlers */}
+            {/* Start game button */}
             <Button 
               className="px-7 py-3 text-2xl bg-white hover:bg-black/5 text-black border-4 border-black rounded-2xl transition-all"
-              onClick={handleStartGame}
+              onClick={() => {
+                if (isWalletConnected) {
+                  handleStartGame()
+                }
+              }}
               disabled={isStarting}
             >
               {isStarting ? 'STARTING...' : 'START'}

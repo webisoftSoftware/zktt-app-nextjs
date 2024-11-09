@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from 'react-router-dom';
 
 interface FooterProps {
   showLinks?: boolean;
@@ -14,7 +14,7 @@ export default function Footer({ showLinks = true }: FooterProps) {
         <div className="flex items-center gap-4">
           {/* GitHub link */}
           <Link 
-            href="https://github.com/webisoftSoftware/" 
+            to="https://github.com/webisoftSoftware/" 
             className="hover:text-gray-600 text-lg"
             target="_blank"           // Open in new tab
             rel="noopener noreferrer" // OP for external links
@@ -27,7 +27,7 @@ export default function Footer({ showLinks = true }: FooterProps) {
           
           {/* x fka twitter */}
           <Link 
-            href="https://x.com/zktabletop" 
+            to="https://x.com/zktabletop" 
             className="hover:text-gray-600 text-lg"
             target="_blank"
             rel="noopener noreferrer"
@@ -39,7 +39,7 @@ export default function Footer({ showLinks = true }: FooterProps) {
       
       {/* email link */}
       <Link 
-        href="mailto:zktt.team@gmail.com" 
+        to="mailto:zktt.team@gmail.com" 
         className="hover:text-gray-600 text-lg"
       >
         get in touch

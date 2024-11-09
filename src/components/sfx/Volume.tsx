@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Image from 'next/image'
 import { Html } from '@react-three/drei'
 
 export function Volume() {
@@ -15,7 +14,7 @@ export function Volume() {
           onClick={() => setIsVolumeOn(!isVolumeOn)}
           className="w-5 h-5 transition-opacity hover:opacity-70"
         >
-          <Image
+          <img
             src={isVolumeOn ? '/img/vol_on.png' : '/img/vol_off.png'}
             alt={isVolumeOn ? 'Volume On' : 'Volume Off'}
             width={21}

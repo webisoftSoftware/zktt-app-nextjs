@@ -1,12 +1,9 @@
 'use client';
 
 import { useRef } from 'react';
-import dynamic from 'next/dynamic';
 import { Center } from '@react-three/drei';
+import Scene from '../canvas/Scene';
 
-// Dynamically import Scene component with SSR disabled
-// This prevents hydration issues with Three.js
-const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: false });
 
 // Define props interface for type safety
 type LayoutProps = {
