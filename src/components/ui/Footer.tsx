@@ -38,7 +38,6 @@ export default function Footer({ showLinks = true }: FooterProps) {
       )}
       
       {/* email link */}
-      [temp info - 
       <Link 
         href="mailto:zktt.team@gmail.com" 
         className="hover:text-gray-600 text-base"
