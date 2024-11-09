@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import Image from 'next/image'
+import { Link } from 'react-router-dom';
 
 // controller imports
 import { useEffect, useState } from "react"
@@ -64,8 +63,8 @@ export default function Header({ nav = true }: { nav?: boolean }) {
 		<div className="absolute top-4 w-full px-8 flex justify-between items-center z-6">
 			{/* Logo and home link */}
 			<div className="flex items-center gap-4">
-				<Link href="/">
-					<Image 
+				<Link to="/">
+					<img
 						src="/img/zktt_square_transparent.png"
 						alt="ZKTT Logo"
 						width={42}

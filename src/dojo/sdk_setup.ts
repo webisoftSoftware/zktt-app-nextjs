@@ -1,8 +1,8 @@
 import { init } from '@dojoengine/sdk'
-import { schema, ZkttSchemaType } from '@/dojo/bindings/models.gen'
-import manifest from '../dojo/manifest_dev.json'
+import { schema, ZkttSchemaType } from './bindings/models.gen'
+import manifest from './manifest_dev.json'
 import { DojoProvider } from '@dojoengine/core'
-import { setupWorld } from '@/dojo/bindings/contracts.gen'
+import { setupWorld } from './bindings/contracts.gen'
 
 export const dojoProvider = (rpcUrl: string) => new DojoProvider(manifest, rpcUrl)
 
@@ -42,12 +42,12 @@ export const getEnv = () => {
     }
   }
 
-  // Access environment variables directly in client-side
-  const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL
-  const TORII_URL = process.env.NEXT_PUBLIC_TORII_URL
-  const RELAY_URL = process.env.NEXT_PUBLIC_RELAY_URL
-  const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
-  const WORLD_ADDRESS = process.env.NEXT_PUBLIC_WORLD_ADDRESS
+  // Access environment variables directly in client-side using Vite's import.meta.env
+  const RPC_URL = import.meta.env.VITE_RPC_URL
+  const TORII_URL = import.meta.env.VITE_TORII_URL
+  const RELAY_URL = import.meta.env.VITE_RELAY_URL
+  const CHAIN_ID = import.meta.env.VITE_CHAIN_ID
+  const WORLD_ADDRESS = import.meta.env.VITE_WORLD_ADDRESS
 
   if (!RPC_URL || !TORII_URL || !RELAY_URL || !CHAIN_ID || !WORLD_ADDRESS) {
     console.error('Missing environment variables:', { RPC_URL, TORII_URL, RELAY_URL, CHAIN_ID, WORLD_ADDRESS });

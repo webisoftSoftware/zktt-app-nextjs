@@ -4,11 +4,11 @@ import { useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
-import { GameSession } from '@/components/game/GameSession'
+import { GameSession } from '../game/GameSession'
 import { CardSprayManager } from '../vfx/CardSprayManager'
-import { Volume } from '@/components/sfx/Volume'
-import { useWallet } from '@/components/controller/WalletContext'
-import { useContractController } from '@/helpers/executeHelper'
+import { Volume } from '../sfx/Volume'
+import { useWallet } from '../controller/WalletContext'
+import { useContractController } from '../../helpers/executeHelper'
 
 export default function GameCanvas() {
   // Reference to the container div for sizing and positioning

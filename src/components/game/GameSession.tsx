@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import * as THREE from 'three'
-import { useWallet } from '@/components/controller/WalletContext'
+import { useWallet } from '../controller/WalletContext'
 import { Html } from '@react-three/drei'
 
 interface GameSessionProps {
