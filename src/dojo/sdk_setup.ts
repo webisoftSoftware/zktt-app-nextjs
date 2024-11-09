@@ -1,5 +1,5 @@
 import { init, SDK } from '@dojoengine/sdk'
-import { schema, ZkttSchemaType } from '@/dojo/bindings/models.gen'
+import { schema, ZkttSchemaType } from '../dojo/bindings/models.gen'
 import manifest from "../dojo/manifest_dev.json"
 
 import { DojoProvider } from "@dojoengine/core";
@@ -23,7 +23,7 @@ export const getSDK = async () => {
       domain: {
         name: "zktt",
         version: "1.0",
-        chainId: props.chainId,
+        chainId: props.chainId ?? "KATANA",
         revision: "1",
       },
     },
