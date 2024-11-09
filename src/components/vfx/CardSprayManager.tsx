@@ -4,6 +4,8 @@ import { CardSprite } from './CardSprite'
 
 interface CardSprayManagerProps {
   isActive?: boolean
+  triggerSpray?: boolean
+  position?: [number, number, number]
 }
 
 interface Card {
@@ -14,51 +16,49 @@ interface Card {
   timestamp: number
 }
 
-export function CardSprayManager({ isActive = false }: CardSprayManagerProps) {
+export function CardSprayManager({ 
+  isActive = false, 
+  triggerSpray = false,
+  position = [0, 0, 0]
+}: CardSprayManagerProps) {
   const [cards, setCards] = useState<Card[]>([])
-  const { mouse, viewport } = useThree()
+  const { viewport } = useThree()
   let nextId = 0
 
   useEffect(() => {
-    if (!isActive) return; // Don't spawn cards if not active
+    if (!isActive || !triggerSpray) return;
 
-    const spawnInterval = setInterval(() => {
-      // Convert mouse position to world coordinates
-      const x = (mouse.x * viewport.width) / 2
-      const y = (mouse.y * viewport.height) / 2
+    // Spawn 280 cards in a spray pattern
+    const newCards = Array.from({ length: 350 }).map(() => {
+      // Create a more dramatic spread pattern
+      const angleXY = Math.random() * Math.PI * 2 // Full 360-degree spread
+      const angleZ = (Math.random() * Math.PI) - Math.PI/2 // -90 to +90 degrees for Z
+      const speed = 8 + Math.random() * 12 // Higher speed between 8-20
 
-      // Adjust scale to maintain proper card aspect ratio (752:1052)
-      const baseScale = (Math.random() * 3.5 + 3.5) / 10
-      //const scaleX = baseScale * 0.752 // Width
-      //const scaleY = baseScale * 1.052 // Height
-
-      // Random velocity
       const velocity: [number, number, number] = [
-        (Math.random() - 0.5) * 5,
-        Math.random() * 5,
-        0
+        Math.cos(angleXY) * Math.cos(angleZ) * speed,
+        Math.sin(angleXY) * Math.cos(angleZ) * speed,
+        Math.sin(angleZ) * speed * 0.5 // Reduced Z velocity for better visibility
       ]
 
-      const newCard: Card = {
+      return {
         id: nextId++,
-        position: [x, y, 0],
-        scale: baseScale, // We'll use this as a base scale in CardSprite
+        position: position,
+        scale: 1,
         velocity,
         timestamp: Date.now()
       }
+    })
 
-      setCards(prev => [...prev, newCard])
-    }, 700)
+    setCards(prev => [...prev, ...newCards])
+  }, [triggerSpray, isActive, position])
 
-    return () => clearInterval(spawnInterval)
-  }, [mouse, viewport, isActive])
-
-  // Cleanup old cards
+  // Cleanup old cards after transition duration
   useEffect(() => {
     const cleanupInterval = setInterval(() => {
       const now = Date.now()
       setCards(prev => prev.filter(card => now - card.timestamp < 7000))
-    }, 1000)
+    }, 100)
 
     return () => clearInterval(cleanupInterval)
   }, [])

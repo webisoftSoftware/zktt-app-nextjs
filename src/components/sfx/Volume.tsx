@@ -29,8 +29,7 @@ export function Volume() {
           <img
             src={isVolumeOn ? '/img/vol_on.png' : '/img/vol_off.png'}
             alt={isVolumeOn ? 'Volume On' : 'Volume Off'}
-            width={21}
-            height={21}
+            style={{ filter: 'brightness(0)' }}
             className="size-full filter-white"
           />
         </div>

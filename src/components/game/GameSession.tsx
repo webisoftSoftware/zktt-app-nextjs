@@ -248,7 +248,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
       />
 
       {/* Deck - 100 cards stacked with a y-offset of 0.05 */}
-      {Array.from({ length: 100 }).map((_, index) => (
+      {Array.from({ length: 70 }).map((_, index) => (
         <GameCard 
           key={index}
           frontTexture="/cards/cardback.png"

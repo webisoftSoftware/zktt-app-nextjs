@@ -9,7 +9,9 @@ import { StarknetProvider } from "../controller/StarknetProvider"
 import { useConnect } from "@starknet-react/core"
 import ControllerConnector from '@cartridge/connector/controller'
 import { shortString } from 'starknet'
+import { CardSprayManager } from '../vfx/CardSprayManager'
 import DojoInit from '../../dojo/sdk_setup'
+
 // Define props interface for component type safety
 interface DashboardProps {
   isWalletConnected: boolean
@@ -40,10 +42,6 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
     if (!logoGroupRef.current) return
     logoGroupRef.current.rotation.y += delta / 3
   })
-
-  // Constants for logo layer effect
-  const LAYERS = 35  // Number of logo layers for depth effect
-  const LAYER_SPACING = 0.007  // Space between each layer
 
   // Add contract controller
   const { executeTransaction, submitted } = useContractController()
@@ -105,7 +103,9 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
     const handleTestGame = async () => {
       try {
         setIsTesting(true)
-        setGameView(true, true) // Pass true for test mode
+        setTriggerSpray(true) // Trigger the card spray
+        setTimeout(() => setTriggerSpray(false), 100) // Reset trigger after cards are spawned
+        setGameView(true, true)
       } catch (error) {
         console.error("Failed to enter test view:", error)
       } finally {
@@ -130,28 +130,30 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
     }
   }
 
+  // Constants for logo layer effect
+  const LAYERS = 35  // Number of logo layers for depth effect
+  const LAYER_SPACING = 0.007  // Space between each layer
+
+  // Add new state for card spray
+  const [triggerSpray, setTriggerSpray] = useState(false)
 
   return (
     <>
-      {/* Spinning zKTT Logo Group */}
-      <group ref={logoGroupRef} position={[0, 0.235, 1]}>
-        {/* Generate multiple layers of the logo for depth effect */}
+      <CardSprayManager 
+        isActive={true} 
+        triggerSpray={triggerSpray}
+        position={[0, 0, 1]} // Adjust position as needed
+      />
+      {/* Layered zKTT Logo Group */}
+      <group ref={logoGroupRef} position={[0, 0.28, 1]}>
         {Array.from({ length: LAYERS }).map((_, index) => (
-          <mesh 
-            key={index}
-            scale={[2.1, 2.1, 2.1]} 
-            position={[0, 0.07, -index * LAYER_SPACING]}
-          >
-            {/* Basic plane geometry for logo texture */}
-            <planeGeometry args={[1, 1]} />
-            
-            {/* Material settings for logo appearance */}
-            <meshBasicMaterial 
-              map={texture} 
-              transparent 
-              opacity={0.99}
-              side={2}  // Render both sides of the plane
-              depthWrite={false}  // Prevent z-fighting between layers
+          <mesh key={index} position={[0, 0, index * LAYER_SPACING]}>
+            <planeGeometry args={[2.1, 2.1]} />
+            <meshBasicMaterial
+              map={texture}
+              transparent
+              opacity={0.98}
+              side={2}
             />
           </mesh>
         ))}
