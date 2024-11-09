@@ -8,22 +8,25 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 function App() {
   return (
-    <Router>
-      <StarknetProvider>
-        <WalletProvider>
-          <Header />
-          <Routes>
-            <Route path="/" element={
-              <Layout>
-                <GameCanvas />
-              </Layout>
-            } />
-            {/* Add other routes as needed */}
-          </Routes>
-          <Footer />
-        </WalletProvider>
-      </StarknetProvider>
-    </Router>
+    <>
+      
+      <Router>
+        <StarknetProvider>
+          <WalletProvider>
+            <Header />
+            <Routes>
+              <Route path="/" element={
+                <Layout>
+                  <GameCanvas />
+                </Layout>
+              } />
+              {/* Add other routes as needed */}
+            </Routes>
+            <Footer />
+          </WalletProvider>
+        </StarknetProvider>
+      </Router>
+    </>
   )
 }
 

@@ -9,6 +9,7 @@ import { CardSprayManager } from '../vfx/CardSprayManager'
 import { Volume } from '../sfx/Volume'
 import { useWallet } from '../controller/WalletContext'
 import { useContractController } from '../../helpers/executeHelper'
+import ShaderBackground from './ShaderBackground'
 
 export default function GameCanvas() {
   // Reference to the container div for sizing and positioning
@@ -26,8 +27,8 @@ export default function GameCanvas() {
   // TEMPORARY DEV HELPER - REMOVE BEFORE PRODUCTION
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsDashboardView(false)
-      setIsTestMode(true)
+      setIsDashboardView(true)
+      setIsTestMode(false)
     }, 1)
     return () => clearTimeout(timer)
   }, [])
@@ -47,11 +48,12 @@ export default function GameCanvas() {
         style={{
           width: '960px',  // Fixed width for consistent layout
           height: '540px',  // 16:9 aspect ratio
-          background: isDashboardView ? 'rgba(255, 255, 255, 1)' : (isTestMode ? '#ffffff' : '#ffffff'),
+          //background: isDashboardView ? 'rgba(255, 255, 255, 1)' : (isTestMode ? '#ffffff' : '#ffffff'),
           border: isDashboardView ? '5px solid white' : '5px solid rgba(255, 255, 255, 1)',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
+        {isDashboardView && <ShaderBackground />}
 
         {/* Conditional rendering based on current view */}
         {isDashboardView ? (
@@ -61,7 +63,7 @@ export default function GameCanvas() {
             camera={{ position: [0, 0, 6], fov: 40 }}  // Set up camera perspective
           >
             <Volume /> 
-            <CardSprayManager isActive={isDashboardView} />
+            {/*<CardSprayManager isActive={isDashboardView} />*/}
             <Dashboard 
               isWalletConnected={isWalletConnected}
               setGameView={handleViewChange}
