@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { Canvas, useThree, useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWallet } from '../controller/WalletContext'
@@ -9,6 +9,7 @@ import { CameraStats, CameraStatsBridgeInCanvas } from '@/components/ui/CameraSt
 import { TextureLoader } from 'three'
 import { AxesHelper } from 'three';
 import WireframeIcon from '../icons/WireframeIcon';
+import { useFrame } from '@react-three/fiber'
 
 interface GameSessionProps {
   onExit: () => void;
@@ -60,9 +61,29 @@ const XZPlane = ({ size, showWireframe }: PlaneProps & { showWireframe: boolean 
         `}
         fragmentShader={`
           varying vec2 vUv;
+
+          float createDiamond(vec2 p, float size) {
+            vec2 q = abs(p);
+            return step(q.x + q.y, size);
+          }
+          
           void main() {
-            vec3 color = mix(vec3(0.3), vec3(0.7), vUv.y); // Darker gradient from dark to medium gray
-            gl_FragColor = vec4(color, 1.0);
+            // Base beige colors
+            vec3 darkBeige = vec3(0.86, 0.84, 0.78);
+            vec3 lightBeige = vec3(0.94, 0.92, 0.86);
+            
+            // Base gradient
+            vec3 baseColor = mix(darkBeige, lightBeige, vUv.y);
+            
+            // Diamond grid pattern
+            vec2 gridUv = fract(vUv * 12.0) * 2.0 - 1.0;
+            float diamond = createDiamond(gridUv, 0.8);
+            
+            // Add subtle diamond pattern
+            float diamondOpacity = 0.08;
+            vec3 finalColor = mix(baseColor, vec3(0.0), diamond * diamondOpacity);
+            
+            gl_FragColor = vec4(finalColor, 1.0);
           }
         `}
       />
@@ -251,6 +272,7 @@ function Board({ position, label, size, rotation = [0, 0, 0], showWireframe }: B
       <mesh>
         <planeGeometry args={size} />
         <meshBasicMaterial color={showWireframe ? "black" : "#bbbcbb"} wireframe={showWireframe} />
+              
       </mesh>
 
       {/* Label */}
@@ -288,7 +310,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         makeDefault
       />
 
-      <Grid size={10} showWireframe={showWireframe} />
+      <Grid size={14} showWireframe={showWireframe} />
+      <EnvironmentSphere />
 
       {/* Menu - bottom right, angled 45 degrees inward */}
        {/* Menu - bottom right, angled 45 degrees inward */}
@@ -299,6 +322,11 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         size={[3, 0.75]}
         showWireframe={showWireframe}
       />
+      <BoardOverlay
+        position={[4.5, 0.301, 3.5]}
+        rotation={[-Math.PI/4, 0, 0]}
+        size={[3, 0.75]}
+      />
 
       {/* Actions - bottom left, angled 45 degrees inward */}
       <Board
@@ -308,9 +336,14 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         size={[3, 0.75]}
         showWireframe={showWireframe}
       />
+      <BoardOverlay
+        position={[-4.5, 0.301, 3.5]}
+        rotation={[-Math.PI/4, 0, 0]}
+        size={[3, 0.75]}
+      />
 
       {/* Deck - only show the first card if wireframe is on */}
-      {Array.from({ length: 100 }).map((_, index) => (
+      {Array.from({ length: 70 }).map((_, index) => (
         (!showWireframe || index === 0) && (
           <GameCard 
             key={index}
@@ -382,8 +415,13 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         position={[0, 0.05, 1.75]} 
         label=""
         rotation={[-Math.PI/2, 0, 0]}
-        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]}
         showWireframe={showWireframe}
+      />
+      <BoardOverlay
+        position={[0, 0.05, 1.75]}
+        rotation={[-Math.PI/2, 0, 0]}
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]}
       />
 
       {/* Player 2 Board */}
@@ -391,8 +429,13 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         position={[0, 0.05, -1.75]} 
         label=""
         rotation={[-Math.PI/2, 0, 0]}
-        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]}
         showWireframe={showWireframe}
+      />
+      <BoardOverlay
+        position={[0, 0.05, -1.75]}
+        rotation={[-Math.PI/2, 0, 0]}
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]}
       />
 
       {/* You can also add specific rotations when needed */}
@@ -510,6 +553,7 @@ export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
         }}
         style={{ background: showWireframe ? 'white' : 'transparent' }}
       >
+        <CameraRig />
         <GameContent 
           onExit={onExit} 
           isTestMode={isTestMode} 
@@ -543,4 +587,181 @@ export const getNextRandomCard = (): string => {
   const card = randomizedCardImages[currentCardIndex];
   currentCardIndex = (currentCardIndex + 1) % randomizedCardImages.length;
   return card;
+}
+
+function CameraRig() {
+  const { camera } = useThree()
+  
+  useSpring({
+    from: {
+      cx: 0.00,
+      cy: 3.18,
+      cz: 11.33,
+      rx: -15.70 * (Math.PI / 180),
+      ry: 0,
+      rz: 0
+    },
+    to: {
+      cx: -0.01,
+      cy: 3.51,
+      cz: 6.97,
+      rx: -26.69 * (Math.PI / 180),
+      ry: -0.06 * (Math.PI / 180),
+      rz: -0.03 * (Math.PI / 180)
+    },
+    config: {
+      mass: 1,
+      tension: 80,
+      friction: 30
+    },
+    onChange: ({ value }) => {
+      camera.position.set(value.cx, value.cy, value.cz)
+      camera.rotation.set(value.rx, value.ry, value.rz)
+      camera.updateProjectionMatrix()
+    }
+  })
+
+  return null
+}
+
+interface BoardOverlayProps {
+  size: [number, number];
+  position: [number, number, number];
+  rotation?: [number, number, number];
+}
+
+const OVERLAY_SCALE = 1.2; // 120% scale
+
+function getScaledOverlaySize(originalSize: [number, number]): [number, number] {
+  return [originalSize[0] * OVERLAY_SCALE, originalSize[1] * OVERLAY_SCALE];
+}
+
+function BoardOverlay({ size, position, rotation = [0, 0, 0] }: BoardOverlayProps) {
+  const [width, height] = size;
+  
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh position={[0, 0, 0.01]}>
+        <planeGeometry args={[width * 1.1, height * 1.1]} /> {/* Increased geometry size for border overflow */}
+        <shaderMaterial
+          transparent
+          uniforms={{
+            borderWidth: { value: 0.08 },    // Increased border width
+            featherWidth: { value: 0.15 },   // Adjusted feather width for smoother transition
+            glowStrength: { value: 0.5 },    // Added glow strength
+            glowRadius: { value: 0.2 },      // Added glow radius
+            opacity: { value: 0.8 },         // Adjusted opacity
+          }}
+          vertexShader={`
+            varying vec2 vUv;
+            void main() {
+              vUv = uv;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+          `}
+          fragmentShader={`
+            uniform float borderWidth;
+            uniform float featherWidth;
+            uniform float glowStrength;
+            uniform float glowRadius;
+            uniform float opacity;
+            varying vec2 vUv;
+            
+            float smoothBorder(float dist, float width, float feather) {
+              float innerEdge = width;
+              float outerEdge = width + feather;
+              return 1.0 - smoothstep(innerEdge, outerEdge, dist);
+            }
+            
+            void main() {
+              // Normalize UV coordinates to center (range -0.5 to 0.5)
+              vec2 centeredUv = vUv - 0.5;
+              
+              // Calculate distance from edges
+              float distFromEdgeX = abs(centeredUv.x);
+              float distFromEdgeY = abs(centeredUv.y);
+              
+              // Get the maximum distance to create a rounded rectangle
+              float distFromEdge = max(distFromEdgeX, distFromEdgeY);
+              
+              // Create smooth border with glow
+              float border = smoothBorder(distFromEdge, borderWidth, featherWidth);
+              float glow = smoothBorder(distFromEdge, borderWidth + glowRadius, featherWidth) * glowStrength;
+              
+              // Combine border and glow
+              float finalMask = max(border, glow);
+              
+              // Create gradient from center to edge for the border
+              vec3 borderColor = mix(vec3(1.0), vec3(0.9), distFromEdge * 2.0);
+              
+              // Output final color with transparency
+              gl_FragColor = vec4(borderColor, finalMask * opacity);
+            }
+          `}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+function EnvironmentSphere() {
+  const sphereRef = useRef<THREE.Mesh>(null)
+  
+  useFrame((state) => {
+    if (!sphereRef.current) return
+    const time = state.clock.getElapsedTime()
+    sphereRef.current.rotation.x = Math.sin(time * 0.1) * 0.05
+    sphereRef.current.rotation.y = Math.cos(time * 0.15) * 0.05
+  })
+
+  return (
+    <mesh ref={sphereRef} position={[0, 0, 0]}>
+      <sphereGeometry args={[10, 32, 32]} />
+      <shaderMaterial
+        transparent
+        vertexShader={`
+          varying vec3 vPosition;
+          varying vec2 vUv;
+          
+          void main() {
+            vPosition = position;
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `}
+        fragmentShader={`
+          varying vec3 vPosition;
+          varying vec2 vUv;
+          
+          void main() {
+            float dist = length(vPosition) / 50.0;
+            
+            // Grid lines
+            float gridX = abs(fract(vUv.x * 32.0 - 0.5) - 0.5);
+            float gridY = abs(fract(vUv.y * 32.0 - 0.5) - 0.5);
+            float grid = min(gridX, gridY);
+            
+            // Grid color
+            vec3 gridColor = vec3(0.0);
+            float gridAlpha = smoothstep(0.05, 0.0, grid) * 0.3;
+            
+            // Baby blue colors
+            vec3 babyBlue1 = vec3(0.678, 0.847, 0.902);  // Light baby blue
+            vec3 babyBlue2 = vec3(0.529, 0.808, 0.980);  // Slightly darker baby blue
+            
+            // Create gradient between the two baby blue colors
+            vec3 gradientColor = mix(babyBlue1, babyBlue2, dist);
+            
+            // Combine grid and gradient
+            vec3 finalColor = mix(gridColor, gradientColor, 0.5);
+            
+            // Fade transparency at edges
+            float alpha = smoothstep(1.0, 0.2, dist) * 0.35;
+            
+            gl_FragColor = vec4(finalColor, alpha * (1.0 - gridAlpha));
+          }
+        `}
+      />
+    </mesh>
+  )
 }
