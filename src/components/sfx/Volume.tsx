@@ -21,7 +21,7 @@ export function Volume() {
 
   return (
     <>
-      <div className="cursor-pointer">
+      <div className="absolute bottom-0 right-0 z-50 cursor-pointer p-3">
         <div 
           onClick={() => setIsVolumeOn(!isVolumeOn)}
           className="size-5 transition-opacity hover:opacity-70"
@@ -30,7 +30,7 @@ export function Volume() {
             src={isVolumeOn ? '/img/vol_on.png' : '/img/vol_off.png'}
             alt={isVolumeOn ? 'Volume On' : 'Volume Off'}
             style={{ filter: 'brightness(0)' }}
-            className="size-full filter-white"
+            className="filter-white size-full"
           />
         </div>
       </div>
