@@ -21,7 +21,7 @@ export function Volume() {
 
   return (
     <>
-      <div className="cursor-pointer">
+      <div className="cursor-pointer z-50 absolute bottom-0 right-0 p-3">
         <div 
           onClick={() => setIsVolumeOn(!isVolumeOn)}
           className="size-5 transition-opacity hover:opacity-70"

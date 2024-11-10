@@ -7,8 +7,6 @@ import { OrbitControls } from '@react-three/drei'
 import { useSpring, animated } from '@react-spring/three'
 import { CameraStats, CameraStatsBridgeInCanvas } from '@/components/ui/CameraStats'
 import { TextureLoader } from 'three'
-import { AxesHelper } from 'three';
-import WireframeIcon from '../icons/WireframeIcon';
 
 interface GameSessionProps {
   onExit: () => void;
@@ -31,41 +29,22 @@ interface GameCardProps {
   rotation?: [number, number, number];
   size?: [number, number];
   isFaceUp?: boolean;
+  isInHand?: boolean;
 }
 
-const XZPlane = ({ size, showWireframe }: PlaneProps & { showWireframe: boolean }) => (
+const XZPlane = ({ size }: PlaneProps) => (
   <Plane
-    args={[showWireframe ? size : size * 10, showWireframe ? size : size * 10, size, size]}
+    args={[size, size, size, size]}
     rotation={[1.5 * Math.PI, 0, 0]}
     position={[0, 0, 0]}
   >
-    {showWireframe ? (
-      <meshStandardMaterial 
-        attach="material" 
-        color="black" 
-        wireframe 
-        opacity={0.1}  
-        transparent 
-      />
-    ) : (
-      <shaderMaterial
-        attach="material"
-        vertexShader={`
-          varying vec2 vUv;
-          void main() {
-            vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `}
-        fragmentShader={`
-          varying vec2 vUv;
-          void main() {
-            vec3 color = mix(vec3(0.3), vec3(0.7), vUv.y); // Darker gradient from dark to medium gray
-            gl_FragColor = vec4(color, 1.0);
-          }
-        `}
-      />
-    )}
+    <meshStandardMaterial 
+      attach="material" 
+      color="#000000" 
+      wireframe 
+      opacity={0.30}  
+      transparent 
+    />
   </Plane>
 )
 
@@ -77,7 +56,7 @@ const XYPlane = ({ size }: PlaneProps) => (
   >
     <meshStandardMaterial 
       attach="material" 
-      color="black" 
+      color="pink" 
       wireframe 
       opacity={0.1}  
       transparent 
@@ -93,7 +72,7 @@ const YZPlane = ({ size }: PlaneProps) => (
   >
     <meshStandardMaterial 
       attach="material" 
-      color="black" 
+      color="#80ffdb" 
       wireframe 
       opacity={0.1}  
       transparent 
@@ -101,16 +80,12 @@ const YZPlane = ({ size }: PlaneProps) => (
   </Plane>
 )
 
-function Grid({ size, showWireframe }: PlaneProps & { showWireframe: boolean }) {
+function Grid({ size }: PlaneProps) {
   return (
     <group>
-      <XZPlane size={showWireframe ? size : size * 10} showWireframe={showWireframe} />
-      {showWireframe && (
-        <>
-          <XYPlane size={size} />
-          <YZPlane size={size} />
-        </>
-      )}
+      <XZPlane size={size} />
+      <XYPlane size={size} />
+      <YZPlane size={size} />
     </group>
   )
 }
@@ -137,7 +112,7 @@ const CARD_DIMENSIONS = {
   }
 }
 
-function GameCard({
+export function GameCard({
   frontTexture,
   backTexture = '/cards/cardback.png',
   position, 
@@ -145,14 +120,15 @@ function GameCard({
   rotation = [0, 0, 0], 
   size = CARD_DIMENSIONS.getScaledDimensions(0.75),
   isFaceUp = true,
-  showWireframe
-}: GameCardProps & { showWireframe: boolean }) {
+  isInHand = false
+}: GameCardProps) {
+  const [hovered, setHovered] = useState(false);
   const baseRotation = [-Math.PI/2, 0, 0] as [number, number, number];
   
-  const { flipRotation } = useSpring({
-    flipRotation: isFaceUp ? 0 : Math.PI,
-    config: { mass: 1, tension: 180, friction: 12 }
-  });
+  // Calculate the hover offset
+  const yOffset = hovered ? 0.2 : 0;
+  const [x, y, z] = position;
+  const adjustedPosition: [number, number, number] = [x, y + yOffset, z];
 
   const frontTextureMap = useMemo(() => {
     const texturePath = frontTexture ?? getNextRandomCard();
@@ -164,7 +140,7 @@ function GameCard({
   }, [backTexture]);
 
   return (
-    <group position={position}>
+    <group position={adjustedPosition}>
       <animated.group
         rotation-x={baseRotation[0] + rotation[0]}
         rotation-y={baseRotation[1] + rotation[1]}
@@ -174,55 +150,32 @@ function GameCard({
           <div className="whitespace-nowrap text-[10px] text-black">{label}</div>
         </Html>
         {/* Front face */}
-        <mesh>
+        <mesh
+          onPointerOver={() => setHovered(true)}
+          onPointerOut={() => setHovered(false)}
+        >
           <planeGeometry args={size} />
           <meshBasicMaterial 
             map={frontTextureMap}
             transparent={true}
             side={THREE.FrontSide}
-            wireframe={showWireframe}
-            color={showWireframe ? "black" : "white"}
           />
         </mesh>
         {/* Back face */}
-        <mesh>
+        <mesh
+          onPointerOver={() => setHovered(true)}
+          onPointerOut={() => setHovered(false)}
+        >
           <planeGeometry args={size} />
           <meshBasicMaterial 
             map={backTextureMap}
             transparent={true}
             side={THREE.BackSide}
-            wireframe={showWireframe}
-            color={showWireframe ? "black" : "white"}
           />
         </mesh>
       </animated.group>
     </group>
   )
-}
-
-// Define the Board component
-interface BoardProps {
-  position: [number, number, number];
-  label: string;
-  size: [number, number];
-  rotation?: [number, number, number]; // Optional rotation prop
-}
-
-function Board({ position, label, size, rotation = [0, 0, 0], showWireframe }: BoardProps & { showWireframe: boolean }) {
-  return (
-    <group position={position} rotation={rotation}>
-      {/* Main Board with Custom Color */}
-      <mesh>
-        <planeGeometry args={size} />
-        <meshBasicMaterial color={showWireframe ? "black" : "#bbbcbb"} wireframe={showWireframe} />
-      </mesh>
-
-      {/* Label */}
-      <Html center transform>
-        <div className="whitespace-nowrap text-[10px] text-black">{label}</div>
-      </Html>
-    </group>
-  );
 }
 
 interface GameContentProps {
@@ -235,7 +188,7 @@ const getRandomCardIndex = (): number => {
   return Math.floor(Math.random() * cardImages.length);  // Returns 0, 1, 2, 3, or 4
 }
 
-function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: GameContentProps & { showWireframe: boolean }) {
+function GameContent({ onExit, isTestMode, onCameraUpdate }: GameContentProps) {
   const { viewport } = useThree();
 
   return (
@@ -250,171 +203,190 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         makeDefault
       />
 
-      <Grid size={10} showWireframe={showWireframe} />
+      <Grid size={10} />
 
       {/* Menu - bottom right, angled 45 degrees inward */}
-      <Board 
-        position={[4.5, 0.3, 3.5]} 
-        label=""
-        rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
+      <GameCard
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[3, 0, 3]} 
+        label="menu"
+        rotation={[Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
         size={[3, 0.75]}
-        showWireframe={showWireframe}
       />
 
       {/* Actions - bottom left, angled 45 degrees inward */}
-      <Board
-        position={[-4.5, 0.3, 3.5]} 
-        label=""
-        rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
+      <GameCard 
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[-3, 0, 3]} 
+        label="actions"
+        rotation={[Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
         size={[3, 0.75]}
-        showWireframe={showWireframe}
       />
 
-      {/* Deck - only show the first card if wireframe is on */}
-      {Array.from({ length: 100 }).map((_, index) => (
-        (!showWireframe || index === 0) && (
-          <GameCard 
-            key={index}
-            frontTexture="/cards/cardback.png"
-            backTexture="/cards/cardback.png"
-            position={[-3.4, 0.0084 * index, 0]} // Start at y=0 and increment by 0.05 for each card
-            label=''
-            size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
-            showWireframe={showWireframe && index === 0} // Only show wireframe for the first card
-          />
-        )
-      ))}
+      {/* Deck - using standard size */}
+      <GameCard 
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[-3.4, 0, 0]} 
+        label="deck"
+        size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
+      />
 
       {/* Discard - using standard size */}
       <GameCard 
+        frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[3.4, 0.05, 0]} 
-        label=""
+        position={[3.4, 0, 0]} 
+        label="discard"
         size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
-        showWireframe={showWireframe}
       />
 
-      {/* Player 1 Hand x 5 */}
+      {/* Player 1 Hand - tight fan from left to right */}
       <GameCard
         backTexture="/cards/cardback.png"
-        position={[-1, 0.82, 4]} 
+        position={[-0.4, 0.1, 3.6]} 
         label=""
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
-        rotation={[Math.PI/2.2, 0, 0.2]}
-        showWireframe={showWireframe}
+        rotation={[Math.PI/2.2, 0, 0.4]}
       />
-       <GameCard 
+      <GameCard 
         backTexture="/cards/cardback.png"
-        position={[-0.5, 0.88, 4]} 
+        position={[-0.2, 0.2, 3.7]} 
         label=""
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
-        rotation={[Math.PI/2.2, 0, 0.1]}  
-        showWireframe={showWireframe}
+        rotation={[Math.PI/2.2, 0, 0.2]}  
       />
-       <GameCard 
+      <GameCard 
         backTexture="/cards/cardback.png"
-        position={[0, 0.9, 4]} 
+        position={[0, 0.3, 3.8]} 
         label=""
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
-        rotation={[Math.PI/2.2, 0, 0]}  
-        showWireframe={showWireframe}
+        rotation={[Math.PI/2.2, 0, 0]} 
       />
-       <GameCard 
+      <GameCard 
         backTexture="/cards/cardback.png"
-        position={[0.5, 0.88, 4]} 
+        position={[0.2, 0.4, 3.9]} 
         label=""
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
-        rotation={[Math.PI/2.2, 0, -0.1]}  
-        showWireframe={showWireframe}
+        rotation={[Math.PI/2.2, 0, -0.2]} 
       />
-       <GameCard 
+      <GameCard 
         backTexture="/cards/cardback.png"
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
-        position={[1.0, 0.82, 4]} 
+        position={[0.4, 0.5, 4.0]} 
         label=""
-        rotation={[Math.PI/2.2, 0, -0.2]}  
-        showWireframe={showWireframe}
+        rotation={[Math.PI/2.2, 0, -0.4]}
       />
 
-      {/* Player 1 Board */}
-      <Board 
-        position={[0, 0.05, 1.75]} 
+      {/* Opponent's hand - mirrored tight fan */}
+      <GameCard
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[-0.4, 0.1, -3.6]} 
         label=""
-        rotation={[-Math.PI/2, 0, 0]}
-        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
-        showWireframe={showWireframe}
+        rotation={[-Math.PI/2.2, 0, Math.PI + 0.4]}
+      />
+      <GameCard 
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[-0.2, 0.2, -3.7]} 
+        label=""
+        rotation={[-Math.PI/2.2, 0, Math.PI + 0.2]}
+      />
+      <GameCard
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[0, 0.3, -3.8]} 
+        label=""
+        rotation={[-Math.PI/2.2, 0, Math.PI]}
+      />
+      <GameCard
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[0.2, 0.4, -3.9]} 
+        label=""
+        rotation={[-Math.PI/2.2, 0, Math.PI - 0.2]}
+      />
+      <GameCard
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[0.4, 0.5, -4.0]} 
+        label=""
+        rotation={[-Math.PI/2.2, 0, Math.PI - 0.4]}
       />
 
-      {/* Player 2 Board */}
-      <Board 
-        position={[0, 0.05, -1.75]} 
-        label=""
-        rotation={[-Math.PI/2, 0, 0]}
-        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
-        showWireframe={showWireframe}
+      {/* Player 1 Board - matching standard card height */}
+      <GameCard 
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[0, 0, 1.25]} 
+        label="p1.board"
+        size={CARD_DIMENSIONS.getWidthFromHeight(3.25)} // 3.25 units wide, standard height
       />
+
+      {/* Player 1 Board - matching standard card height */}
+      <GameCard 
+        frontTexture="/cards/cardback.png"
+        backTexture="/cards/cardback.png"
+        position={[0, 0, -1.25]} 
+        label="p1.board"
+        size={CARD_DIMENSIONS.getWidthFromHeight(3.25)} // 3.25 units wide, standard height
+      />
+
 
       {/* You can also add specific rotations when needed */}
       <GameCard
+      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[-1.0, 0.82, -4]} 
+        position={[-1.0, 0.42, -4]} 
         label=""
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
           0, // Rotation around the Y axis (approximately 72 degrees)
           Math.PI/1.05 // Rotation around the Z axis (no rotation)
         ]} // This will flip it 180 degrees around Y axis
-        showWireframe={showWireframe}
       />
 
       <GameCard 
+      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[-0.5, 0.88, -4]} 
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        position={[-0.5, 0.48, -4]} 
         label=""
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
           0, // Rotation around the Y axis (approximately 72 degrees)
           Math.PI/1.025 // Rotation around the Z axis (no rotation)
         ]} // This will flip it 180 degrees around Y axis
-        showWireframe={showWireframe}
       />
       <GameCard
+      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[0, 0.9, -4]} 
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
+        position={[0, 0.5, -4]} 
         label=""
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
           0, // Rotation around the Y axis (approximately 72 degrees)
           Math.PI/1.0 // Rotation around the Z axis (no rotation)
         ]} // This will flip it 180 degrees around Y axis
-        showWireframe={showWireframe}
       />
       <GameCard
+      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[0.5, 0.88, -4]} 
+        position={[0.5, 0.48, -4]} 
         label=""
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
             0, // Rotation around the Y axis (approximately 72 degrees)
           -Math.PI/1.025 // Rotation around the Z axis (no rotation)
         ]} // This will flip it 180 degrees around Y axis
-        showWireframe={showWireframe}
       />
       <GameCard
+      frontTexture="/cards/cardback.png"
         backTexture="/cards/cardback.png"
-        position={[1.0, 0.82, -4]} 
+        position={[1.0, 0.42, -4]} 
         label=""
         rotation={[
           -Math.PI/2.2, // Rotation around the X axis (no rotation)
           0, // Rotation around the Y axis (approximately 72 degrees)
           -Math.PI/1.05 // Rotation around the Z axis (no rotation)
         ]} // This will flip it 180 degrees around Y axis
-        size={CARD_DIMENSIONS.getScaledDimensions(1)} 
-        showWireframe={showWireframe}
       />
 
       {isTestMode && <CameraStatsBridgeInCanvas onCameraUpdate={onCameraUpdate} />}
@@ -425,16 +397,10 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
 // Main component
 export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
   const { isWalletConnected } = useWallet()
-  const [playerName, setPlayerName] = useState<string>('')
   const [cameraData, setCameraData] = useState({
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 }
   })
-  const [showWireframe, setShowWireframe] = useState<boolean>(false);
-
-  const toggleWireframe = () => {
-    setShowWireframe(prev => !prev);
-  };
 
   const handleCameraUpdate = useCallback((position: any, rotation: any) => {
     setCameraData({ position, rotation })
@@ -448,35 +414,23 @@ export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
 
   return (
     <div className="size-full">
-      <div className="absolute bottom-0 right-0 z-50 py-3 px-6 flex items-center">
-        <button onClick={toggleWireframe} className="mr-4">
-          <WireframeIcon 
-            className="w-10 h-5" 
-            color="black"
-          />
-        </button>
-      </div>
       <Canvas
         gl={{ 
           toneMapping: THREE.NoToneMapping,
           antialias: true
         }}
         camera={{ 
-          position: [0.00, 3.18, 11.33],
-          rotation: [-15.70 * (Math.PI / 180), 0.00, 0.00],
+          position: [0, 5, 10],
           fov: 45,
           near: 0.1,
           far: 700
         }}
-        style={{ background: showWireframe ? 'white' : 'transparent' }}
       >
         <GameContent 
           onExit={onExit} 
           isTestMode={isTestMode} 
           onCameraUpdate={handleCameraUpdate}
-          showWireframe={showWireframe}
         />
-        {showWireframe && <primitive object={new AxesHelper(5)} />}
       </Canvas>
       
       {isTestMode && <CameraStats cameraData={cameraData} />}

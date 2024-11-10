@@ -40,9 +40,7 @@ export default function GameCanvas() {
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
         }}
       >
-        <div className="absolute right-4 top-4 z-50">
-          <Volume />
-        </div>
+        <Volume />
         {isDashboardView ? (
           <Canvas
             gl={{ toneMapping: THREE.NoToneMapping }}
