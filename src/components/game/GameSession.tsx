@@ -19,6 +19,7 @@ interface GameSessionProps {
 // New component for game content
 import { Plane, Text } from "@react-three/drei"
 import { cardImages } from '../vfx/CardSprite'
+import InitDojo from '@/dojo/sdk_setup'
 
 interface PlaneProps {
   size: number;
@@ -33,6 +34,12 @@ interface GameCardProps {
   size?: [number, number];
   isFaceUp?: boolean;
   isInHand?: boolean;
+}
+
+// Update the EntityData interface to match Dojo's Entity type
+interface EntityData {
+  // Remove the entity_id requirement and make it match Dojo's Entity structure
+  [key: string]: any;  // This allows for flexible entity structure
 }
 
 const XZPlane = ({ size, showWireframe }: PlaneProps & { showWireframe: boolean }) => (
@@ -295,9 +302,73 @@ const getRandomCardIndex = (): number => {
 
 function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: GameContentProps & { showWireframe: boolean }) {
   const { viewport } = useThree();
+  const [isLoading, setIsLoading] = useState(false);
+  const [entities, setEntities] = useState<EntityData[]>([]);
+
+  const fetchEntities = async () => {
+    setIsLoading(true);
+    try {
+      let dojo = await InitDojo(); // Initialize Dojo
+      const client = dojo.sdk.client;
+      const allEntities = await client.getAllEntities(10, 0);
+      setEntities(Object.values(allEntities) as EntityData[]); // Type assertion to EntityData[]
+      console.log('Fetched entities:', allEntities);
+
+      {entities.length > 0 && (
+        <div className="mt-4 max-h-60 overflow-auto">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-2">Entity ID</th>
+                <th className="text-left p-2">Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entities.map((entity, index) => (
+                <tr key={index} className="border-b">
+                  <td className="p-2">{entity.entity_id}</td>
+                  <td className="p-2">{entity.type || 'Unknown'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    } catch (error) {
+      console.error("Error fetching entities:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
+      let dojo = await InitDojo(); // Initialize Dojo
+      const client = dojo.sdk.client;
+      const allEntities = await client.getAllEntities(10, 0);
+      setEntities(Object.values(allEntities) as EntityData[]); // Type assertion to EntityData[]
+      console.log('Fetched entities:', allEntities);
+
+      {entities.length > 0 && (
+        <div className="mt-4 max-h-60 overflow-auto">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-2">Entity ID</th>
+                <th className="text-left p-2">Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entities.map((entity, index) => (
+                <tr key={index} className="border-b">
+                  <td className="p-2">{entity.entity_id}</td>
+                  <td className="p-2">{entity.type || 'Unknown'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
 
