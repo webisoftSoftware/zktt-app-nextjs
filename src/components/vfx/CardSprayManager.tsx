@@ -28,17 +28,16 @@ export function CardSprayManager({
   useEffect(() => {
     if (!isActive || !triggerSpray) return;
 
-    // Spawn 280 cards in a spray pattern
-    const newCards = Array.from({ length: 350 }).map(() => {
-      // Create a more dramatic spread pattern
-      const angleXY = Math.random() * Math.PI * 2 // Full 360-degree spread
-      const angleZ = (Math.random() * Math.PI) - Math.PI/2 // -90 to +90 degrees for Z
-      const speed = 8 + Math.random() * 12 // Higher speed between 8-20
+    // Doubled from 350 to 700 cards
+    const newCards = Array.from({ length: 700 }).map(() => {
+      const angleXY = Math.random() * Math.PI * 2
+      const angleZ = (Math.random() * Math.PI) - Math.PI/2
+      const speed = 8 + Math.random() * 12
 
       const velocity: [number, number, number] = [
         Math.cos(angleXY) * Math.cos(angleZ) * speed,
         Math.sin(angleXY) * Math.cos(angleZ) * speed,
-        Math.sin(angleZ) * speed * 0.5 // Reduced Z velocity for better visibility
+        Math.sin(angleZ) * speed * 0.5
       ]
 
       return {

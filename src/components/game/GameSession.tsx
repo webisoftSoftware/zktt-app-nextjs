@@ -75,12 +75,12 @@ const XZPlane = ({ size, showWireframe }: PlaneProps & { showWireframe: boolean 
             // Base gradient
             vec3 baseColor = mix(darkBeige, lightBeige, vUv.y);
             
-            // Diamond grid pattern
-            vec2 gridUv = fract(vUv * 12.0) * 2.0 - 1.0;
+            // Diamond grid pattern - increased density by multiplying vUv by 24.0 instead of 12.0
+            vec2 gridUv = fract(vUv * 24.0) * 2.0 - 1.0;
             float diamond = createDiamond(gridUv, 0.8);
             
-            // Add subtle diamond pattern
-            float diamondOpacity = 0.08;
+            // Add more prominent diamond pattern - increased opacity from 0.08 to 0.16
+            float diamondOpacity = 0.16;
             vec3 finalColor = mix(baseColor, vec3(0.0), diamond * diamondOpacity);
             
             gl_FragColor = vec4(finalColor, 1.0);
@@ -716,51 +716,11 @@ function EnvironmentSphere() {
 
   return (
     <mesh ref={sphereRef} position={[0, 0, 0]}>
-      <sphereGeometry args={[10, 32, 32]} />
-      <shaderMaterial
+      <sphereGeometry args={[12.5, 32, 32]} /> {/* Increased from 10 to 12.5 (25% larger) */}
+      <meshBasicMaterial
         transparent
-        vertexShader={`
-          varying vec3 vPosition;
-          varying vec2 vUv;
-          
-          void main() {
-            vPosition = position;
-            vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `}
-        fragmentShader={`
-          varying vec3 vPosition;
-          varying vec2 vUv;
-          
-          void main() {
-            float dist = length(vPosition) / 50.0;
-            
-            // Grid lines
-            float gridX = abs(fract(vUv.x * 32.0 - 0.5) - 0.5);
-            float gridY = abs(fract(vUv.y * 32.0 - 0.5) - 0.5);
-            float grid = min(gridX, gridY);
-            
-            // Grid color
-            vec3 gridColor = vec3(0.0);
-            float gridAlpha = smoothstep(0.05, 0.0, grid) * 0.3;
-            
-            // Baby blue colors
-            vec3 babyBlue1 = vec3(0.678, 0.847, 0.902);  // Light baby blue
-            vec3 babyBlue2 = vec3(0.529, 0.808, 0.980);  // Slightly darker baby blue
-            
-            // Create gradient between the two baby blue colors
-            vec3 gradientColor = mix(babyBlue1, babyBlue2, dist);
-            
-            // Combine grid and gradient
-            vec3 finalColor = mix(gridColor, gradientColor, 0.5);
-            
-            // Fade transparency at edges
-            float alpha = smoothstep(1.0, 0.2, dist) * 0.35;
-            
-            gl_FragColor = vec4(finalColor, alpha * (1.0 - gridAlpha));
-          }
-        `}
+        opacity={0.5} // Decreased transparency by 50%
+        side={THREE.BackSide}
       />
     </mesh>
   )

@@ -103,14 +103,39 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
     const handleTestGame = async () => {
       try {
         setIsTesting(true)
-        setIsPlayDisabled(true) // Disable the play button
-        setTriggerSpray(true) // Trigger the card spray
+        setIsPlayDisabled(true)
+        setTriggerSpray(true)
 
-        // Assume the animation lasts 1000ms (1 second)
+        // Start the logo animation after 8.5 seconds (1.5s before transition)
         setTimeout(() => {
-          setTriggerSpray(false) // Reset trigger after cards are spawned
-          setIsPlayDisabled(false) // Re-enable the play button after the animation
-        }, 10000) // Adjust this duration to match your animation length
+          // Animate scale and position
+          const startTime = Date.now()
+          const animationDuration = 1500 // 1.5 seconds
+          
+          const animateLogoTransform = () => {
+            const elapsed = Date.now() - startTime
+            const progress = Math.min(elapsed / animationDuration, 1)
+            
+            // Exponential scaling
+            const scale = 1 + (999 * Math.pow(progress, 2))
+            setLogoScale(scale)
+            
+            // Move towards camera
+            const newZ = 1 + (progress * 20)
+            setLogoPosition([0, 0.28, newZ])
+            
+            if (progress < 1) {
+              requestAnimationFrame(animateLogoTransform)
+            }
+          }
+          
+          animateLogoTransform()
+        }, 8500)
+
+        setTimeout(() => {
+          setTriggerSpray(false)
+          setIsPlayDisabled(false)
+        }, 10000)
 
         setGameView(true, true)
       } catch (error) {
@@ -147,15 +172,17 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
   // Add new state for play button disabled state
   const [isPlayDisabled, setIsPlayDisabled] = useState(false)
 
+  const [logoScale, setLogoScale] = useState(1)
+  const [logoPosition, setLogoPosition] = useState<[number, number, number]>([0, 0.28, 1])
+
   return (
     <>
       <CardSprayManager 
         isActive={true} 
         triggerSpray={triggerSpray}
-        position={[0, 0, 1]} // Adjust position as needed
+        position={[0, 0, 1]}
       />
-      {/* Layered zKTT Logo Group */}
-      <group ref={logoGroupRef} position={[0, 0.28, 1]}>
+      <group ref={logoGroupRef} position={logoPosition} scale={logoScale}>
         {Array.from({ length: LAYERS }).map((_, index) => (
           <mesh key={index} position={[0, 0, index * LAYER_SPACING]}>
             <planeGeometry args={[2.1, 2.1]} />

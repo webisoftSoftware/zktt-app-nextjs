@@ -49,9 +49,11 @@ export default function GameCanvas() {
             style={{ background: 'white' }}
           >
             <OrbitControls
-              minDistance={0.1}
-              maxDistance={50.0}
+              minDistance={6}
+              maxDistance={6}
               enablePan={false}
+              enableZoom={false}
+              enableRotate={false}
             />
             <Dashboard 
               isWalletConnected={isWalletConnected}
