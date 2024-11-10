@@ -247,6 +247,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
+        minDistance={1}
+        maxDistance={17.0}
         makeDefault
       />
 

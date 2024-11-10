@@ -9,6 +9,7 @@ import { CardSprayManager } from '../vfx/CardSprayManager'
 import { Volume } from '../sfx/Volume'
 import { useWallet } from '../controller/WalletContext'
 import { useContractController } from '../../helpers/executeHelper'
+import { OrbitControls } from '@react-three/drei'
 
 export default function GameCanvas() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -47,6 +48,11 @@ export default function GameCanvas() {
             camera={{ position: [0, 0, 6], fov: 40 }}
             style={{ background: 'white' }}
           >
+            <OrbitControls
+              minDistance={0.1}
+              maxDistance={50.0}
+              enablePan={false}
+            />
             <Dashboard 
               isWalletConnected={isWalletConnected}
               setGameView={handleViewChange}
