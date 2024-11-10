@@ -73,7 +73,7 @@ const cartridge = new ControllerConnector({
   url: 'https://x.cartridge.gg',
   rpc: 'https://api.cartridge.gg/x/starknet/sepolia',
   //rpc: 'http://0.0.0.0:5050',
-  theme: 'abc',
+  theme: 'zktt',
 })
 function provider(chain: Chain) {
   switch (chain) {
