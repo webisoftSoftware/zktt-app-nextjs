@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { Canvas, useThree, useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useWallet } from '../controller/WalletContext'
@@ -9,6 +9,7 @@ import { CameraStats, CameraStatsBridgeInCanvas } from '@/components/ui/CameraSt
 import { TextureLoader } from 'three'
 import { AxesHelper } from 'three';
 import WireframeIcon from '../icons/WireframeIcon';
+import { useFrame } from '@react-three/fiber'
 
 interface GameSessionProps {
   onExit: () => void;
@@ -59,9 +60,29 @@ const XZPlane = ({ size, showWireframe }: PlaneProps & { showWireframe: boolean 
         `}
         fragmentShader={`
           varying vec2 vUv;
+
+          float createDiamond(vec2 p, float size) {
+            vec2 q = abs(p);
+            return step(q.x + q.y, size);
+          }
+          
           void main() {
-            vec3 color = mix(vec3(0.3), vec3(0.7), vUv.y); // Darker gradient from dark to medium gray
-            gl_FragColor = vec4(color, 1.0);
+            // Base beige colors
+            vec3 darkBeige = vec3(0.86, 0.84, 0.78);
+            vec3 lightBeige = vec3(0.94, 0.92, 0.86);
+            
+            // Base gradient
+            vec3 baseColor = mix(darkBeige, lightBeige, vUv.y);
+            
+            // Diamond grid pattern
+            vec2 gridUv = fract(vUv * 12.0) * 2.0 - 1.0;
+            float diamond = createDiamond(gridUv, 0.8);
+            
+            // Add subtle diamond pattern
+            float diamondOpacity = 0.08;
+            vec3 finalColor = mix(baseColor, vec3(0.0), diamond * diamondOpacity);
+            
+            gl_FragColor = vec4(finalColor, 1.0);
           }
         `}
       />
@@ -252,6 +273,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
       />
 
       <Grid size={14} showWireframe={showWireframe} />
+      <EnvironmentSphere />
 
       {/* Menu - bottom right, angled 45 degrees inward */}
       <Board 
@@ -640,4 +662,66 @@ function BoardOverlay({ size, position, rotation = [0, 0, 0] }: BoardOverlayProp
       </mesh>
     </group>
   );
+}
+
+function EnvironmentSphere() {
+  const sphereRef = useRef<THREE.Mesh>(null)
+  
+  useFrame((state) => {
+    if (!sphereRef.current) return
+    const time = state.clock.getElapsedTime()
+    sphereRef.current.rotation.x = Math.sin(time * 0.1) * 0.05
+    sphereRef.current.rotation.y = Math.cos(time * 0.15) * 0.05
+  })
+
+  return (
+    <mesh ref={sphereRef} position={[0, 0, 0]}>
+      <sphereGeometry args={[10, 32, 32]} />
+      <shaderMaterial
+        transparent
+        vertexShader={`
+          varying vec3 vPosition;
+          varying vec2 vUv;
+          
+          void main() {
+            vPosition = position;
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `}
+        fragmentShader={`
+          varying vec3 vPosition;
+          varying vec2 vUv;
+          
+          void main() {
+            float dist = length(vPosition) / 50.0;
+            
+            // Grid lines
+            float gridX = abs(fract(vUv.x * 32.0 - 0.5) - 0.5);
+            float gridY = abs(fract(vUv.y * 32.0 - 0.5) - 0.5);
+            float grid = min(gridX, gridY);
+            
+            // Grid color
+            vec3 gridColor = vec3(0.0);
+            float gridAlpha = smoothstep(0.05, 0.0, grid) * 0.3;
+            
+            // Baby blue colors
+            vec3 babyBlue1 = vec3(0.678, 0.847, 0.902);  // Light baby blue
+            vec3 babyBlue2 = vec3(0.529, 0.808, 0.980);  // Slightly darker baby blue
+            
+            // Create gradient between the two baby blue colors
+            vec3 gradientColor = mix(babyBlue1, babyBlue2, dist);
+            
+            // Combine grid and gradient
+            vec3 finalColor = mix(gridColor, gradientColor, 0.5);
+            
+            // Fade transparency at edges
+            float alpha = smoothstep(1.0, 0.2, dist) * 0.35;
+            
+            gl_FragColor = vec4(finalColor, alpha * (1.0 - gridAlpha));
+          }
+        `}
+      />
+    </mesh>
+  )
 }
