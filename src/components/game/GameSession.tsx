@@ -31,6 +31,7 @@ interface GameCardProps {
   rotation?: [number, number, number];
   size?: [number, number];
   isFaceUp?: boolean;
+  isInHand?: boolean;
 }
 
 const XZPlane = ({ size, showWireframe }: PlaneProps & { showWireframe: boolean }) => (
@@ -137,7 +138,7 @@ const CARD_DIMENSIONS = {
   }
 }
 
-function GameCard({
+export function GameCard({
   frontTexture,
   backTexture = '/cards/cardback.png',
   position, 
@@ -145,14 +146,37 @@ function GameCard({
   rotation = [0, 0, 0], 
   size = CARD_DIMENSIONS.getScaledDimensions(0.75),
   isFaceUp = true,
+  isInHand = false,
   showWireframe
 }: GameCardProps & { showWireframe: boolean }) {
+  
+  const [hovered, setHovered] = useState(false);
   const baseRotation = [-Math.PI/2, 0, 0] as [number, number, number];
   
-  const { flipRotation } = useSpring({
-    flipRotation: isFaceUp ? 0 : Math.PI,
-    config: { mass: 1, tension: 180, friction: 12 }
-  });
+  // Enhanced hover animation with curved lift
+  const [x, y, z] = position;
+  const liftHeight = 0.5;
+  const forwardPush = 0.5;
+  
+  // Quadratic curve calculation
+  const t = hovered ? 2 : 0;
+  const verticalOffset = liftHeight * Math.sin(t * Math.PI/2); // Smooth easing
+  const forwardOffset = hovered ? (z > 0 ? forwardPush : -forwardPush) : 0;
+  const curveOffset = hovered ? Math.sin(t * Math.PI) * 0.3 : 0; // Adds arc to movement
+
+  const adjustedPosition: [number, number, number] = [
+    x + (curveOffset * (z > 0 ? -1 : 1)), // Slight curve inward
+    y + verticalOffset,
+    z + forwardOffset
+  ];
+
+  // Add a subtle tilt when hovering
+  const hoverRotation = hovered ? Math.sin(t * Math.PI/2) * 0.15 : 0;
+  const finalRotation: [number, number, number] = [
+    baseRotation[0] + rotation[0],
+    baseRotation[1] + rotation[1] + hoverRotation,
+    baseRotation[2] + rotation[2]
+  ];
 
   const frontTextureMap = useMemo(() => {
     const texturePath = frontTexture ?? getNextRandomCard();
@@ -164,12 +188,23 @@ function GameCard({
   }, [backTexture]);
 
   return (
-    <group position={position}>
-      <animated.group
-        rotation-x={baseRotation[0] + rotation[0]}
-        rotation-y={baseRotation[1] + rotation[1]}
-        rotation-z={baseRotation[2] + rotation[2]}
-      >
+    <group 
+      position={adjustedPosition}
+      onPointerOver={(e) => {
+        e.stopPropagation(); // Prevent event bubbling
+        setHovered(true);
+      }}
+      onPointerOut={(e) => {
+        e.stopPropagation();
+        setHovered(false);
+      }}
+    >
+      <animated.group rotation={finalRotation}>
+        {/* Add invisible blocker plane slightly behind card */}
+        <mesh position={[0, 0, -0.01]}>
+          <planeGeometry args={[size[0] + 0.05, size[1] + 0.1]} /> {/* Slightly larger than card */}
+          <meshBasicMaterial visible={false} />
+        </mesh>
         <Html center transform>
           <div className="whitespace-nowrap text-[10px] text-black">{label}</div>
         </Html>
@@ -253,7 +288,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
       <Grid size={10} showWireframe={showWireframe} />
 
       {/* Menu - bottom right, angled 45 degrees inward */}
-      <Board 
+       {/* Menu - bottom right, angled 45 degrees inward */}
+       <Board 
         position={[4.5, 0.3, 3.5]} 
         label=""
         rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
@@ -425,7 +461,6 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
 // Main component
 export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
   const { isWalletConnected } = useWallet()
-  const [playerName, setPlayerName] = useState<string>('')
   const [cameraData, setCameraData] = useState({
     position: { x: 0, y: 0, z: 0 },
     rotation: { x: 0, y: 0, z: 0 }
