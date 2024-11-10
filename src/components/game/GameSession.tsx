@@ -147,8 +147,9 @@ export function GameCard({
   size = CARD_DIMENSIONS.getScaledDimensions(0.75),
   isFaceUp = true,
   isInHand = false,
-  showWireframe
-}: GameCardProps & { showWireframe: boolean }) {
+  showWireframe,
+  disableHover = false
+}: GameCardProps & { showWireframe: boolean, disableHover?: boolean }) {
   
   const [hovered, setHovered] = useState(false);
   const baseRotation = [-Math.PI/2, 0, 0] as [number, number, number];
@@ -159,10 +160,10 @@ export function GameCard({
   const forwardPush = 0.5;
   
   // Quadratic curve calculation
-  const t = hovered ? 2 : 0;
+  const t = hovered && !disableHover ? 2 : 0;
   const verticalOffset = liftHeight * Math.sin(t * Math.PI/2); // Smooth easing
-  const forwardOffset = hovered ? (z > 0 ? forwardPush : -forwardPush) : 0;
-  const curveOffset = hovered ? Math.sin(t * Math.PI) * 0.3 : 0; // Adds arc to movement
+  const forwardOffset = hovered && !disableHover ? (z > 0 ? forwardPush : -forwardPush) : 0;
+  const curveOffset = hovered && !disableHover ? Math.sin(t * Math.PI) * 0.3 : 0; // Adds arc to movement
 
   const adjustedPosition: [number, number, number] = [
     x + (curveOffset * (z > 0 ? -1 : 1)), // Slight curve inward
@@ -171,7 +172,7 @@ export function GameCard({
   ];
 
   // Add a subtle tilt when hovering
-  const hoverRotation = hovered ? Math.sin(t * Math.PI/2) * 0.15 : 0;
+  const hoverRotation = hovered && !disableHover ? Math.sin(t * Math.PI/2) * 0.15 : 0;
   const finalRotation: [number, number, number] = [
     baseRotation[0] + rotation[0],
     baseRotation[1] + rotation[1] + hoverRotation,
@@ -192,11 +193,11 @@ export function GameCard({
       position={adjustedPosition}
       onPointerOver={(e) => {
         e.stopPropagation(); // Prevent event bubbling
-        setHovered(true);
+        if (!disableHover) setHovered(true);
       }}
       onPointerOut={(e) => {
         e.stopPropagation();
-        setHovered(false);
+        if (!disableHover) setHovered(false);
       }}
     >
       <animated.group rotation={finalRotation}>
@@ -317,6 +318,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
             label=''
             size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
             showWireframe={showWireframe && index === 0} // Only show wireframe for the first card
+            disableHover={true} // Disable hover effect for Deck Cards
           />
         )
       ))}
@@ -328,6 +330,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         label=""
         size={CARD_DIMENSIONS.getScaledDimensions(1)} // Standard size
         showWireframe={showWireframe}
+        disableHover={true} // Disable hover effect for Discard
       />
 
       {/* Player 1 Hand x 5 */}
