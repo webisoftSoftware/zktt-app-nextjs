@@ -215,6 +215,7 @@ function Board({ position, label, size, rotation = [0, 0, 0], showWireframe }: B
       <mesh>
         <planeGeometry args={size} />
         <meshBasicMaterial color={showWireframe ? "black" : "#bbbcbb"} wireframe={showWireframe} />
+              
       </mesh>
 
       {/* Label */}
@@ -250,7 +251,7 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         makeDefault
       />
 
-      <Grid size={10} showWireframe={showWireframe} />
+      <Grid size={14} showWireframe={showWireframe} />
 
       {/* Menu - bottom right, angled 45 degrees inward */}
       <Board 
@@ -259,6 +260,11 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         rotation={[-Math.PI/4, 0, 0]}  // Rotate -45 degrees around X axis
         size={[3, 0.75]}
         showWireframe={showWireframe}
+      />
+      <BoardOverlay
+        position={[4.5, 0.301, 3.5]}
+        rotation={[-Math.PI/4, 0, 0]}
+        size={[3, 0.75]}
       />
 
       {/* Actions - bottom left, angled 45 degrees inward */}
@@ -269,9 +275,14 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         size={[3, 0.75]}
         showWireframe={showWireframe}
       />
+      <BoardOverlay
+        position={[-4.5, 0.301, 3.5]}
+        rotation={[-Math.PI/4, 0, 0]}
+        size={[3, 0.75]}
+      />
 
       {/* Deck - only show the first card if wireframe is on */}
-      {Array.from({ length: 100 }).map((_, index) => (
+      {Array.from({ length: 70 }).map((_, index) => (
         (!showWireframe || index === 0) && (
           <GameCard 
             key={index}
@@ -341,8 +352,13 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         position={[0, 0.05, 1.75]} 
         label=""
         rotation={[-Math.PI/2, 0, 0]}
-        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]}
         showWireframe={showWireframe}
+      />
+      <BoardOverlay
+        position={[0, 0.05, 1.75]}
+        rotation={[-Math.PI/2, 0, 0]}
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]}
       />
 
       {/* Player 2 Board */}
@@ -350,8 +366,13 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         position={[0, 0.05, -1.75]} 
         label=""
         rotation={[-Math.PI/2, 0, 0]}
-        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]} // Custom width and height
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]}
         showWireframe={showWireframe}
+      />
+      <BoardOverlay
+        position={[0, 0.05, -1.75]}
+        rotation={[-Math.PI/2, 0, 0]}
+        size={[12, CARD_DIMENSIONS.getScaledDimensions(1)[1]]}
       />
 
       {/* You can also add specific rotations when needed */}
@@ -452,7 +473,7 @@ export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
         <button onClick={toggleWireframe} className="mr-4">
           <WireframeIcon 
             className="w-10 h-5" 
-            color="black"
+            color={showWireframe ? 'black' : 'white'}
           />
         </button>
       </div>
@@ -470,6 +491,7 @@ export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
         }}
         style={{ background: showWireframe ? 'white' : 'transparent' }}
       >
+        <CameraRig />
         <GameContent 
           onExit={onExit} 
           isTestMode={isTestMode} 
@@ -503,4 +525,119 @@ export const getNextRandomCard = (): string => {
   const card = randomizedCardImages[currentCardIndex];
   currentCardIndex = (currentCardIndex + 1) % randomizedCardImages.length;
   return card;
+}
+
+function CameraRig() {
+  const { camera } = useThree()
+  
+  useSpring({
+    from: {
+      cx: 0.00,
+      cy: 3.18,
+      cz: 11.33,
+      rx: -15.70 * (Math.PI / 180),
+      ry: 0,
+      rz: 0
+    },
+    to: {
+      cx: -0.01,
+      cy: 3.51,
+      cz: 6.97,
+      rx: -26.69 * (Math.PI / 180),
+      ry: -0.06 * (Math.PI / 180),
+      rz: -0.03 * (Math.PI / 180)
+    },
+    config: {
+      mass: 1,
+      tension: 80,
+      friction: 30
+    },
+    onChange: ({ value }) => {
+      camera.position.set(value.cx, value.cy, value.cz)
+      camera.rotation.set(value.rx, value.ry, value.rz)
+      camera.updateProjectionMatrix()
+    }
+  })
+
+  return null
+}
+
+interface BoardOverlayProps {
+  size: [number, number];
+  position: [number, number, number];
+  rotation?: [number, number, number];
+}
+
+const OVERLAY_SCALE = 1.2; // 120% scale
+
+function getScaledOverlaySize(originalSize: [number, number]): [number, number] {
+  return [originalSize[0] * OVERLAY_SCALE, originalSize[1] * OVERLAY_SCALE];
+}
+
+function BoardOverlay({ size, position, rotation = [0, 0, 0] }: BoardOverlayProps) {
+  const [width, height] = size;
+  
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh position={[0, 0, 0.01]}>
+        <planeGeometry args={[width * 1.1, height * 1.1]} /> {/* Increased geometry size for border overflow */}
+        <shaderMaterial
+          transparent
+          uniforms={{
+            borderWidth: { value: 0.08 },    // Increased border width
+            featherWidth: { value: 0.15 },   // Adjusted feather width for smoother transition
+            glowStrength: { value: 0.5 },    // Added glow strength
+            glowRadius: { value: 0.2 },      // Added glow radius
+            opacity: { value: 0.8 },         // Adjusted opacity
+          }}
+          vertexShader={`
+            varying vec2 vUv;
+            void main() {
+              vUv = uv;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+          `}
+          fragmentShader={`
+            uniform float borderWidth;
+            uniform float featherWidth;
+            uniform float glowStrength;
+            uniform float glowRadius;
+            uniform float opacity;
+            varying vec2 vUv;
+            
+            float smoothBorder(float dist, float width, float feather) {
+              float innerEdge = width;
+              float outerEdge = width + feather;
+              return 1.0 - smoothstep(innerEdge, outerEdge, dist);
+            }
+            
+            void main() {
+              // Normalize UV coordinates to center (range -0.5 to 0.5)
+              vec2 centeredUv = vUv - 0.5;
+              
+              // Calculate distance from edges
+              float distFromEdgeX = abs(centeredUv.x);
+              float distFromEdgeY = abs(centeredUv.y);
+              
+              // Get the maximum distance to create a rounded rectangle
+              float distFromEdge = max(distFromEdgeX, distFromEdgeY);
+              
+              // Create smooth border with glow
+              float border = smoothBorder(distFromEdge, borderWidth, featherWidth);
+              float glow = smoothBorder(distFromEdge, borderWidth + glowRadius, featherWidth) * glowStrength;
+              
+              // Combine border and glow
+              float finalMask = max(border, glow);
+              
+              // Create gradient from center to edge for the border
+              vec3 borderColor = mix(vec3(1.0), vec3(0.9), distFromEdge * 2.0);
+              
+              // Output final color with transparency
+              gl_FragColor = vec4(borderColor, finalMask * opacity);
+            }
+          `}
+        />
+      </mesh>
+    </group>
+  );
 }
