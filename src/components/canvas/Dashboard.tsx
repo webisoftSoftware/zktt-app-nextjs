@@ -103,8 +103,15 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
     const handleTestGame = async () => {
       try {
         setIsTesting(true)
+        setIsPlayDisabled(true) // Disable the play button
         setTriggerSpray(true) // Trigger the card spray
-        setTimeout(() => setTriggerSpray(false), 100) // Reset trigger after cards are spawned
+
+        // Assume the animation lasts 1000ms (1 second)
+        setTimeout(() => {
+          setTriggerSpray(false) // Reset trigger after cards are spawned
+          setIsPlayDisabled(false) // Re-enable the play button after the animation
+        }, 10000) // Adjust this duration to match your animation length
+
         setGameView(true, true)
       } catch (error) {
         console.error("Failed to enter test view:", error)
@@ -136,6 +143,9 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
 
   // Add new state for card spray
   const [triggerSpray, setTriggerSpray] = useState(false)
+
+  // Add new state for play button disabled state
+  const [isPlayDisabled, setIsPlayDisabled] = useState(false)
 
   return (
     <>
@@ -232,9 +242,9 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
             <Button 
               className="rounded-2xl border-4 border-black bg-white px-14 py-3 text-2xl text-black transition-all hover:bg-black hover:text-white"
               onClick={handleTestGame}
-              disabled={isTesting}
+              disabled={isTesting || isPlayDisabled} // Disable button when testing or play is disabled
             >
-              PLAY
+              {isPlayDisabled ? 'JOINING...' : 'PLAY'}
             </Button>
             <Button 
               className="rounded-2xl border-4 border-black bg-white px-8 py-3 text-2xl text-black transition-all hover:bg-black hover:text-white"

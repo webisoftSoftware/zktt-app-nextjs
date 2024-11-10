@@ -170,10 +170,10 @@ export function CardSprite({ position, scale, velocity }: CardSpriteProps) {
     
     // Final spiral phase
     else {
-      const targetPos = [-3.4, 0, 0]
+      const targetPos = [0, 0, 0] // Center of the canvas
       const finalRotation = [Math.PI/1, 0, 0]
       
-      // Smooth position transition
+      // Smooth position transition to center
       meshRef.current.position.x += (targetPos[0] - meshRef.current.position.x) * delta * 4
       meshRef.current.position.y += (targetPos[1] - meshRef.current.position.y) * delta * 4
       meshRef.current.position.z += (targetPos[2] - meshRef.current.position.z) * delta * 4
