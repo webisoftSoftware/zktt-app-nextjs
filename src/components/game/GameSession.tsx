@@ -269,6 +269,8 @@ function GameContent({ onExit, isTestMode, onCameraUpdate, showWireframe }: Game
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
+        minDistance={1}
+        maxDistance={17.0}
         makeDefault
       />
 
@@ -491,11 +493,11 @@ export function GameSession({ onExit, isTestMode = false }: GameSessionProps) {
 
   return (
     <div className="size-full">
-      <div className="absolute bottom-0 right-0 z-50 py-3 px-6 flex items-center">
+      <div className="absolute bottom-0 right-0 z-50 flex items-center px-6 py-3">
         <button onClick={toggleWireframe} className="mr-4">
           <WireframeIcon 
-            className="w-10 h-5" 
-            color={showWireframe ? 'black' : 'white'}
+            className="h-5 w-10" 
+            color="black"
           />
         </button>
       </div>
