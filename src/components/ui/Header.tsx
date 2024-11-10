@@ -63,7 +63,7 @@ export default function Header({ nav = true }: { nav?: boolean }) {
 		<div className="absolute top-4 z-10 flex w-full items-center justify-between px-8">
 			{/* Logo and home link */}
 			<div className="flex items-center gap-4">
-				<Link to="/">
+				<Link to="/" onClick={() => window.location.reload()}>
 					<img
 						src="/img/zktt_square_transparent.png"
 						alt="ZKTT Logo"
