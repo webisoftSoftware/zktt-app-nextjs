@@ -6,7 +6,6 @@ import * as THREE from 'three'
 import { Dashboard } from './Dashboard'
 import { GameSession } from '../game/GameSession'
 import { CardSprayManager } from '../vfx/CardSprayManager'
-import { Volume } from '../sfx/Volume'
 import { useWallet } from '../controller/WalletContext'
 import { useContractController } from '../../helpers/executeHelper'
 import { OrbitControls } from '@react-three/drei'
@@ -41,7 +40,6 @@ export default function GameCanvas() {
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
         }}
       >
-        <Volume />
         {isDashboardView ? (
           <Canvas
             gl={{ toneMapping: THREE.NoToneMapping }}
@@ -54,6 +52,7 @@ export default function GameCanvas() {
               enablePan={false}
               enableZoom={false}
               enableRotate={false}
+              makeDefault
             />
             <Dashboard 
               isWalletConnected={isWalletConnected}
