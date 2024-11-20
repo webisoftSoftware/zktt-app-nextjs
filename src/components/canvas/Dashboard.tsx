@@ -138,6 +138,7 @@ export function Dashboard({ isWalletConnected, setGameView }: DashboardProps) {
         }, 10000)
 
         setGameView(true, true)
+
       } catch (error) {
         console.error("Failed to enter test view:", error)
       } finally {

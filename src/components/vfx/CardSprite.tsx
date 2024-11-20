@@ -135,8 +135,8 @@ export function CardSprite({ position, scale, velocity }: CardSpriteProps) {
       // Calculate bounds based on aspect ratio (960x540)
       const aspectRatio = 960/540
       const boundsY = 8
-      const boundsX = boundsY * aspectRatio
-      const boundsZ = 10
+      const boundsX = boundsY * aspectRatio * 0.4  // Reduced horizontal bounds by 60%
+      const boundsZ = 10 * 0.4  // Reduced depth bounds to match
 
       // Bounce off screen edges with more energy preservation
       if (Math.abs(meshRef.current.position.x) > boundsX) {
@@ -158,14 +158,37 @@ export function CardSprite({ position, scale, velocity }: CardSpriteProps) {
     
     // Return phase
     else if (elapsedTime > returnStartTime.current && elapsedTime <= finalPhaseTime.current) {
-      // Smooth upward transition
-      const transitionProgress = (elapsedTime - returnStartTime.current) / 
-                                (finalPhaseTime.current - returnStartTime.current)
-      const upwardForce = Math.sin(transitionProgress * Math.PI) * 8
+      // Slow falling motion with consistent drift for all directions
+      const fallSpeed = -0.3  // Base falling speed
+      const driftSpeed = 0.3  // Same speed for horizontal movement
+      
+      // Calculate direction to center
+      const targetPos = [-3.4, 0, 0] // Target position (deck location)
+      const dirX = targetPos[0] - meshRef.current.position.x
+      const dirZ = targetPos[2] - meshRef.current.position.z
+      
+      // Normalize direction and apply consistent speed
+      const distance = Math.sqrt(dirX * dirX + dirZ * dirZ)
+      if (distance > 0.1) { // Only apply if not too close to target
+        velocityRef.current[0] = (dirX / distance) * driftSpeed
+        velocityRef.current[2] = (dirZ / distance) * driftSpeed
+      } else {
+        velocityRef.current[0] = 0
+        velocityRef.current[2] = 0
+      }
+      
+      // Apply consistent vertical fall
+      velocityRef.current[1] = fallSpeed
 
-      velocityRef.current[1] = upwardForce
-      velocityRef.current[0] += (Math.random() - 0.5) * delta * 2
-      velocityRef.current[2] += (Math.random() - 0.5) * delta * 2
+      // Update position
+      meshRef.current.position.x += velocityRef.current[0] * delta
+      meshRef.current.position.y += velocityRef.current[1] * delta
+      meshRef.current.position.z += velocityRef.current[2] * delta
+
+      // Slow rotation during fall
+      rotationVelocity.current.x *= 0.99
+      rotationVelocity.current.y *= 0.99
+      rotationVelocity.current.z *= 0.99
     }
     
     // Final spiral phase
